@@ -1,0 +1,42 @@
+<config>
+        <!-- Used to put VMs together -->
+    <locations>
+        <location name='gcentralus'  location='config:centralus'     />
+        <location name='geastasia'   location='config:eastasia'      />
+        <location name='gwesteurope' location='config:westeurope'    />
+    </locations>
+
+    <security-groups>
+        <security-group name='iperf' public-port='5001' private-port='5001' virtual-machines='vmcentralus,vmwesteurope,vmeastasia,vm2centralus,vm2westeurope,vm2eastasia' protocol='tcp'/>
+    </security-groups>
+
+    <virtual-networks>
+        <virtual-network name='vncentralus'  location='gcentralus'  address-range='10.0.0.0/16' />
+        <virtual-network name='vnwesteurope' location='gwesteurope' address-range='10.0.0.0/16' />
+        <virtual-network name='vneastasia'   location='geastasia'   address-range='10.0.0.0/16' />
+    </virtual-networks>
+
+    <virtual-machines>
+        <!-- Group 1 -->
+        <virtual-machine name='vmcentralus'  virtual-network='vncentralus'  image='config:imagecentralus'        type='config:vm-type' location='gcentralus'/>
+        <virtual-machine name='vmwesteurope' virtual-network='vnwesteurope' image='config:imagewesteurope'    type='config:vm-type' location='gwesteurope'/>
+        <virtual-machine name='vmeastasia'   virtual-network='vneastasia'   image='config:imageeastasia' type='config:vm-type' location='geastasia'/>
+
+        <!-- Group 2 -->
+        <virtual-machine name='vm2centralus'  virtual-network='vncentralus'  image='config:imagecentralus'        type='config:vm-type' location='gcentralus'/>
+        <virtual-machine name='vm2westeurope' virtual-network='vnwesteurope' image='config:imagewesteurope'    type='config:vm-type' location='gwesteurope'/>
+        <virtual-machine name='vm2eastasia'   virtual-network='vneastasia'   image='config:imageeastasia' type='config:vm-type' location='geastasia'/>
+    </virtual-machines>
+
+    <gcloud>
+        <config name='vm-type' value='n1-standard-4' />
+
+        <config name='imagecentralus'  value='ubuntu-14-04' />
+        <config name='imagewesteurope' value='ubuntu-14-04' />
+        <config name='imageeastasia'   value='ubuntu-14-04' />
+
+        <config name='centralus'     value='us-central1-a' />
+        <config name='westeurope'    value='europe-west1-b'     />
+        <config name='eastasia'      value='asia-east1-a'/>
+    </gcloud>
+</config>

@@ -1,0 +1,15 @@
+ap-northeast-1,ami-936d9d93
+ap-southeast-1,ami-96f1c1c4
+ap-southeast-2,ami-69631053
+eu-central-1,ami-accff2b1
+eu-west-1,ami-47a23a30
+sa-east-1,ami-4d883350
+us-east-1,ami-d05e75b8
+us-west-1,ami-df6a8b9b
+us-west-2,ami-01729c45
+
+us-west-1     ,ami-bf3dccfb
+us-east-1     ,ami-c135f3aa
+eu-west-1     ,ami-664b0a11
+ap-southeast-1,ami-967879c4
+ap-northeast-1,ami-a25cffa2
