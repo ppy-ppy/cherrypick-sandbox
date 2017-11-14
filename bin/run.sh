@@ -90,7 +90,7 @@ configExec() {
 
     paramsQ="--params=$params"
     expQ="--benchmark=$expName"
-    cloudQ="--cloud=aws"
+    cloudQ="--cloud=openstack"
     noExecQ="--no-execute"
     setupQ="--setup"
     teardownQ="--teardown"
