@@ -4,10 +4,7 @@
     </locations>
 
     <virtual-machines>
-        <virtual-machine name='vm1' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
-        <virtual-machine name='vm2' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
-        <virtual-machine name='vm3' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
-        <virtual-machine name='vm4' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
+        <virtual-machine name='localhost' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
     </virtual-machines>
 
     <virtual-networks>
@@ -48,4 +45,22 @@
             <add-values name='vn1' address-range='10.0.0.0/20' />
         </virtual-networks>
     </gcloud>
+
+    <local>
+        <config name='ubuntu' value='ubuntu-14-04' />
+        <config name='us'   value='us-central1-b' />
+
+        <virtual-networks>
+            <add-values name='vn1' address-range='10.0.0.0/20' />
+        </virtual-networks>
+    </local>
+
+    <openstack>
+        <config name='ubuntu' value='ubuntu-14-04' />
+        <config name='us'   value='us-central1-b' />
+
+        <virtual-networks>
+            <add-values name='vn1' address-range='10.0.0.0/20' />
+        </virtual-networks>
+    </openstack>
 </config>
