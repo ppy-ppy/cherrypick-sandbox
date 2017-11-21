@@ -54,7 +54,7 @@ class LocalCloud(Cloud):
         return True
 
     def create_security_group(self, ep):
-        return None
+        return True
 
     def create_virtual_machine(self, vm):
         return True
