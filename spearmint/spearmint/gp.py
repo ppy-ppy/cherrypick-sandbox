@@ -26,7 +26,7 @@ import numpy as np
 import scipy.linalg as spla
 import scipy.optimize as spo
 import scipy.io as sio
-import scipy.weave
+import weave
     
 SQRT_3 = np.sqrt(3.0)
 SQRT_5 = np.sqrt(5.0)
