@@ -54,6 +54,9 @@ def find_runs(spec):
         print "run"
         command = "./run.sh 0 " + EXPERIMENT + " " + vm + " 1"
         print os.system(command)
+        # TODO: read the result in 'local-spark.master.type-1-results/1/spark.master.type.time'
+        # TODO: write the result time, together with the information of exp & conf into DB
+        # TODO: read the corresponding row from DB and return the runs[0] as above
 
         return 9999999
 

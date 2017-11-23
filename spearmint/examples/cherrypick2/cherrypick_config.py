@@ -1,6 +1,6 @@
 import math
 
-EXPERIMENT='tpcds'
+EXPERIMENT='local'
 COST_FUNC = lambda run: math.log(run.cost * 100)
 
 def filter_runs(runs):
