@@ -35,7 +35,7 @@ from Locker  import *
 from helpers import *
 
 import config
-from price import config_price
+# from price import config_price
 
 
 def init(expt_dir, arg_string):

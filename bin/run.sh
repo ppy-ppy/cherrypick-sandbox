@@ -141,7 +141,7 @@ export -f configExec
 #}
 
 parallelization=${1:-no-value}
-exp=${2:-"spark"}
+exp=${2:-"local"}
 iType=${3:-"c4.large"}
 iCount=${4:-"1"}
 dType=${5:-""}
