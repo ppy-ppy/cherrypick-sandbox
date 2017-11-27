@@ -19,7 +19,7 @@ def disable(func):
 class LocalCloud(Cloud):
     def __init__(self, *args, **kwargs):
         super(LocalCloud, self).__init__(*args, **kwargs)
-        constants.DEFAULT_VM_USERNAME = 'harry'
+        constants.DEFAULT_VM_USERNAME = 'vode'
         constants.DEFAULT_VM_PRIVATE_KEY= '~/.ssh/id_rsa'
 
     def execute(self, command, obj={}):

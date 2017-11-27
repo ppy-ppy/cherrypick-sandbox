@@ -4,6 +4,8 @@ from cherrypick_config import *
 from schema import *
 import commands
 
+import os
+
 def vm_name(vm_type, cpu_count):
     vm_type = vm_type[0]
     cpu_count = int(cpu_count[0])
@@ -43,6 +45,14 @@ def find_runs(spec):
     vm = vm_name(vm_type, cpu_count)
     exp = Experiment.find(EXPERIMENT)
     print EXPERIMENT
+
+    print "exp: ",exp
+
+    vm_0 = VirtualMachineType.selectBy(name=vm).getOne()
+    machine = Machine.selectBy(vm=vm_0).getOne()
+    config = Configuration.selectBy(machine=machine, count=cluster_size_normalized(vm, int(cluster_size))).getOne()
+
+
     runs = exp.find_runs(vm, cluster_size_normalized(vm, int(cluster_size)))
     print "runs", runs
     if runs:
@@ -58,6 +68,15 @@ def find_runs(spec):
         # TODO: write the result time, together with the information of exp & conf into DB
         # TODO: read the corresponding row from DB and return the runs[0] as above
 
+        while (os.path.exists('local-spark.master.type-1-results') == False):
+            continue
+        f = open('local-spark.master.type-1-results/1/spark.master.type.time')
+        line = f.readline()
+        run_time = float(line.split(',')[1])
+        print "run time is :", run_time
+        num=4
+
+        Run(exp=exp, config=config, time=run_time, num=num)
         return 9999999
 
 
