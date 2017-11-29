@@ -188,7 +188,8 @@ def main():
         # This is polling frequency. A higher frequency means that the algorithm
         # picks up results more quickly after they finish, but also significantly
         # increases overhead.
-        time.sleep(options.polling_time)
+        # time.sleep(options.polling_time)
+        time.sleep(1)
 
 
 # TODO:

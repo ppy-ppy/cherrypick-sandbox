@@ -52,33 +52,36 @@ def find_runs(spec):
     machine = Machine.selectBy(vm=vm_0).getOne()
     config = Configuration.selectBy(machine=machine, count=cluster_size_normalized(vm, int(cluster_size))).getOne()
 
-
     runs = exp.find_runs(vm, cluster_size_normalized(vm, int(cluster_size)))
     print "runs", runs
     if runs:
         print "[@]> %s\t%s\t%d\t%.2f\t%.4f\t%.4f" % (exp.name, vm, int(cluster_size), runs[0].time, runs[0].cost, COST_FUNC(runs[0]))
-        return runs[0]
+
     else:
-        # (status, output) = commands.getstatusoutput('./run.sh 0')
-        # print "999999999999999", status, output
+
         print "run"
         command = "./run.sh 0 " + EXPERIMENT + " " + vm + " 1"
         print os.system(command)
-        # TODO: read the result in 'local-spark.master.type-1-results/1/spark.master.type.time'
-        # TODO: write the result time, together with the information of exp & conf into DB
-        # TODO: read the corresponding row from DB and return the runs[0] as above
 
-        while (os.path.exists('local-spark.master.type-1-results') == False):
+        dirname = EXPERIMENT + '-' + 'local_type' + "-1-results"  # 'local_type' will be replaced by vm in the future.
+        print dirname
+        while os.path.exists(dirname) is False:
             continue
-        f = open('local-spark.master.type-1-results/1/spark.master.type.time')
+        filename = dirname + '/1/' + 'local_type' + '.time' # 'local_type' will be replaced by vm in the future.
+        f = open(filename)
         line = f.readline()
         run_time = float(line.split(',')[1])
         print "run time is :", run_time
-        num=4
-
+        num = 1
         Run(exp=exp, config=config, time=run_time, num=num)
-        return 9999999
 
+        runs = exp.find_runs(vm, cluster_size_normalized(vm, int(cluster_size)))
+        print "[@]> %s\t%s\t%d\t%.2f\t%.4f\t%.4f" % (exp.name, vm, int(cluster_size), runs[0].time, runs[0].cost, COST_FUNC(runs[0]))
+
+    if runs[0].time > TIME_LIMIT:
+        raise Exception("Run Time Exceeds!")
+
+    return runs[0]
 
 
 def main(job_id, params):

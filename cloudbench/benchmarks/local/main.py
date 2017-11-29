@@ -8,17 +8,17 @@ def makedirectory(name):
 
 
 def local(vms, env):
-
-    directory='local-' + 'spark.master.type' + '-' + str(len(vms)) + "-results"
+    spark_master_type = 'local_type'
+    directory='local-' + spark_master_type + '-' + str(len(vms)) + "-results"
     makedirectory(directory)
     iteration = str(1)
     makedirectory(directory + '/' + iteration)
 
     run_time = random.uniform(300, 1000)
-    spark_out = 'start-running-end'
-    file_name = 'spark.master.type'
+    spark_out = spark_master_type
+    file_name = spark_master_type
 
-    with open(os.path.join(directory, str(iteration), 'spark.master.type' + '.time'), 'w+') as f:
+    with open(os.path.join(directory, str(iteration), spark_master_type + '.time'), 'w+') as f:
         f.write('0,%s' % str(run_time))
     with open(os.path.join(directory, str(iteration), file_name + ".out"), 'w+') as f:
         f.write(spark_out)

@@ -2,6 +2,7 @@ import math
 
 EXPERIMENT='local'
 COST_FUNC = lambda run: math.log(run.cost * 100)
+TIME_LIMIT = 500
 
 def filter_runs(runs):
     def bad_runs(run):
