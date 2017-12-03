@@ -10,7 +10,7 @@ class Linux(RsyncTransfer, SecureShell, LinuxInstaller, LinuxFileSystem):
         self._memory = None;
         self._cpus = None;
 
-    def intf_ip(self, intf='eth0'):
+    def intf_ip(self, intf='ens3'):
         extract = """grep -B1 "inet addr" |awk '{ if ( $1 == "inet" ) { print $2 }}' | awk -F: '{printf "%s", $2}'"""
         return self.script("ifconfig " + intf + " | " + extract)
 
