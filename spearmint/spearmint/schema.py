@@ -11,7 +11,7 @@ def create_database():
 
 
 def setup_connection():
-    db_filename = os.path.abspath(os.path.join(__file__, '..', 'data', 'openstackexp.db'))
+    db_filename = os.path.abspath(os.path.join(__file__, '../', 'openstackexp.db'))
     connection_string = 'sqlite:' + db_filename
     connection = connectionForURI(connection_string)
     sqlhub.processConnection = connection
@@ -85,11 +85,12 @@ class Configuration(SQLObject):
 
 class Experiment(SQLObject):
     name = StringCol()
+    count = IntCol()
     runs = MultipleJoin('Run', joinColumn='exp_id')
 
-    def find_runs(self, vm_name, count):
+    def find_runs(self, vm_name, machine_count):
         vm = VirtualMachineType.selectBy(name=vm_name).getOne()
-        config = Configuration.selectBy(vm=vm, count=count).getOne()
+        config = Configuration.selectBy(vm=vm, count=machine_count).getOne()
         return list(Run.selectBy(exp=self, config=config))
 
     @classmethod

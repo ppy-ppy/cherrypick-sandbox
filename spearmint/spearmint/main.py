@@ -33,6 +33,7 @@ import socket
 import numpy as np
 import random
 import config
+from schema import Experiment as Exp
 
 try: import simplejson as json
 except ImportError: import json
@@ -110,6 +111,9 @@ def parse_args():
                       dest="web_status_host", type="string", default=None)
     parser.add_option("-v", "--verbose", action="store_true",
                       help="Print verbose debug output.")
+    parser.add_option("--user-mode", dest="user_mode",
+                      help="Choose online/offline user mode",
+                      type="string", default="offline")
 
     (options, args) = parser.parse_args()
 
@@ -258,8 +262,55 @@ def attempt_dispatch(expt_config, expt_dir, chooser, driver, options):
         log("Maximum number of jobs (%d) pending." % (options.max_concurrent))
         return True
 
+    if options.user_mode == "online":
+
+        log("Choosing current best... ")
+        best_val, best_job = expt_grid.get_best()
+        if best_job >= 0:
+            log("Current best: %f (job %d)" % (best_val, best_job))
+        else:
+            log("Current best: No results returned yet.")
+            options.user_mode = "offline"
+            return True
+
+        job_id = best_job
+        print job_id
+        expt_grid.set_candidate(job_id)
+        exp = Exp.find(expt.name)
+        print exp.count
+        exp.count += 1
+        print exp.count
+        log("selected job %d from the grid." % (job_id))
+
+        # Convert this back into an interpretable job and add metadata.
+        job = Job()
+        job.id = job_id
+        job.expt_dir = expt_dir
+        job.name = expt.name
+        job.language = expt.language
+        job.status = 'submitted'
+        job.submit_t = int(time.time())
+        job.param.extend(expt_grid.get_params(job_id))
+
+        save_job(job)
+        pid = driver.submit_job(job)
+        if pid != None:
+            log("submitted - pid = %d" % (pid))
+            expt_grid.set_submitted(job_id, pid)
+            options.user_mode = "offline"
+        else:
+            log("Failed to submit job!")
+            log("Deleting job file.")
+            os.unlink(job_file_for(job))
+
+        return True
+
     else:
 
+        exp = Exp.find(expt.name)
+        print exp.count
+        if exp.count != 0:
+            return False
         # start a bunch of candidate jobs if possible
         #to_start = min(options.max_concurrent - n_pending, n_candidates)
         #log("Trying to start %d jobs" % (to_start))

@@ -1,6 +1,7 @@
 import math
 
 EXPERIMENT = 'local'
+GAMMA = 0.48
 COST_FUNC = lambda run: math.log(run.cost * 100)
 TIME_LIMIT = -1
 

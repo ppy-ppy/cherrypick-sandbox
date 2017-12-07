@@ -1,7 +1,8 @@
 import sys
 
-from cherrypick_config import *
 from schema import *
+
+from cherrypick_config import *
 
 
 def machine_name(run):
