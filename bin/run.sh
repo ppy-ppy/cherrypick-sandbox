@@ -111,13 +111,13 @@ configExec() {
     echo "> Setting up: $expSpec"
     printf "%s\0" $setupQ $noExecQ $paramsQ $expQ $cloudQ $verboseQ | \
         xargs -0 bash -c './cb "$@"' --
-    sleep 10
+    sleep 1
 
     # Execute
     echo "> Executing: $expSpec"
     printf "%s\0" $paramsQ $expQ $cloudQ $verboseQ | \
         xargs -0 bash -c './cb "$@"' --
-    sleep 10
+    sleep 1
 
     out="Exit Done"
 
@@ -128,7 +128,7 @@ configExec() {
     printf "%s\0" $teardownQ $noExecQ $paramsQ $expQ $cloudQ $verboseQ | \
         xargs -0 bash -c './cb "$@"' --
         )
-        sleep 10
+        sleep 1
     done
 
     echo "Teardown is complete: $expName"
@@ -136,24 +136,26 @@ configExec() {
 
 export -f configExec
 
-configFor() {
-    exp="$1"
-    iType="$2"
-    iCount="$3"
-    dType="$4"
+#configFor() {
+#    printf "%s\0%s\0%s\0%s\0" $exp $iType $iCount $dType
+#}
 
-    printf "%s\0%s\0%s\0%s\0" $exp $iType $iCount $dType
-}
+parallelization=${1:-no-value}
+exp=${2:-"spark"}
+iType=${3:-"c4.large"}
+iCount=${4:-"1"}
+dType=${5:-""}
 
 printConfigs() {
     echo -n
-    configFor "kmeans" "m4.xlarge" "4" "ebs"
-    # configFor "spark" "c4.large" "24" "ebs"
+#    configFor "kmeans" "m4.xlarge" "1" "ebs"
+#     configFor "spark" "c4.large" "1" ""
     # configFor "tpcds" "i2.xlarge" "32" ""
+    printf "%s\0%s\0%s\0%s\0" $exp $iType $iCount $dType
 }
 
 usage() {
-    echo -n "run.sh [PARALLELIZATION LEVEL]
+    echo -n "run.sh [PARALLELIZATION LEVEL] [Experiment] [InstanceType] [Machine Count] [Disk Type]
 
 Please add the configs that you want to run to the printConfigs
 function inside the script.  The syntax is:
@@ -170,7 +172,7 @@ Feel free to change that within this file.
 "
 }
 
-parallelization=${1:-no-value}
+
 
 ########################################
 # PARALLELIZATION
