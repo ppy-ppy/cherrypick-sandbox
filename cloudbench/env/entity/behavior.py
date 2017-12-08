@@ -7,10 +7,52 @@ import base64
 
 import inflection
 import time
+# from cloudbench.env.clouds.openstack import OpenstackCloud
+import requests
 
 class Base(object):
     def __init__(self, *args, **kwargs):
         super(Base, self).__init__()
+
+def get_keystone_authtoken():
+    payload = {
+        "auth": {
+            "identity": {
+                "methods": [
+                    "password"
+                ],
+                "password": {
+                    "user": {
+                        "id": 'a692ef50884147d1a5965f7c1ae631ad',
+                        "password": '123456'
+                    }
+                }
+            },
+            "scope": {
+                "project": {
+                    "id": '28558238c2bf4a04bc8bb856321580b9'
+                }
+            }
+        }
+    }
+    response = requests.post("http://" + '10.10.87.100' + ":5000/v3/auth/tokens", json=payload)
+    return response.headers['X-Subject-Token']
+
+
+def get_url_of_instance( instance_name ):
+    token = get_keystone_authtoken()
+    header = {
+        "X-Auth-Token": token
+    }
+    response = requests.get("http://" + '10.10.87.100' + ":8774/v2.1/servers/detail", headers=header)
+    servers = response.json()['servers']
+    for server in servers:
+        if (server['name'] == instance_name):
+            addresses = server['addresses']
+            private_addresses = addresses['private']
+            for private_address in private_addresses:
+                if( private_address['OS-EXT-IPS:type'] == 'floating' ):
+                    return private_address['addr']
 
 class SecureShell(Base):
     def __init__(self, *args, **kwargs):
@@ -21,12 +63,14 @@ class SecureShell(Base):
     def ssh(self, new=False, waitUp=True):
         """ Return a SSH tunnel."""
         if new:
-            return Ssh(self, "".join([self.username, '@', self.url]))
+            # return Ssh(self, "".join([self.username, '@', self.url]))
+            return Ssh(self, "".join([self.username, '@', get_url_of_instance(self.url)]))
 
         if self._ssh:
             return self._ssh
 
-        self._ssh = Ssh(self, "".join([self.username, '@', self.url]))
+        # self._ssh = Ssh(self, "".join([self.username, '@', self.url]))
+        self._ssh = Ssh(self, "".join([self.username, '@', get_url_of_instance(self.url)]))
         return self._ssh
 
     def execute(self, command, daemon=False):

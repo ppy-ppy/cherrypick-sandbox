@@ -350,7 +350,7 @@ class Cloudera(object):
     def setup_hosts(self):
         hosts = ""
         for node in self.nodes:
-            hosts = hosts + "\n" + "{0}\t{1}".format(node.intf_ip('eth0'), node.name)
+            hosts = hosts + "\n" + "{0}\t{1}".format(node.intf_ip('ens3'), node.name)
         parallel(lambda vm: vm.script(write_template('etc-hosts', '/etc/hosts', hosts=hosts)), self.nodes)
 
     def setup_hostnames(self):

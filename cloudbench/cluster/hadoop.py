@@ -82,7 +82,7 @@ class HadoopCluster(Cluster):
         self.master_ = value
 
     def master_ip(self):
-        return self.master_.intf_ip('eth0')
+        return self.master_.intf_ip('ens3')
 
     @property
     def slaves(self):
@@ -282,7 +282,7 @@ class HadoopCluster(Cluster):
         hosts = ""
         names = set()
         for node in self.all_nodes():
-            hosts = hosts + "\n" + "{0}\t{1}".format(node.intf_ip('eth0'), node.name)
+            hosts = hosts + "\n" + "{0}\t{1}".format(node.intf_ip('ens3'), node.name)
             names.add(node.name)
 
         for node in self.all_nodes():
