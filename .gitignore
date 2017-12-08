@@ -129,3 +129,6 @@ ENV/
 # Rope project settings
 .ropeproject
 .idea
+spearmint/examples/cherrypick/chooser\.GPEIOptChooser_hyperparameters\.txt
+spearmint/examples/cherrypick/stats\.sh
+spearmint/examples/braninpy/chooser\.GPEIOptChooser_hyperparameters\.txt
