@@ -133,6 +133,7 @@ class ExperimentGrid:
         self.grid   = np.vstack((self.grid, candidate))
         self.status = np.append(self.status, np.zeros(1, dtype=int) +
                                 int(CANDIDATE_STATE))
+        self.executed = np.append(self.executed, np.zeros(1) + 0)
 
         self.values = np.append(self.values, np.zeros(1)+np.nan)
         self.durs   = np.append(self.durs, np.zeros(1)+np.nan)

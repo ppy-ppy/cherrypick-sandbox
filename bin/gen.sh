@@ -10,7 +10,8 @@ version="1.0.0"              # Sets version variable
 #
 # ##################################################
 
-UUID=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 12 | head -n 1)
+# UUID=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 12 | head -n 1)
+UUID=$(head /dev/urandom | tr -dc 'A-Za-z0-9' | head -c 12)
 UUID="tmp_$UUID"
 
 function mainScript() {
