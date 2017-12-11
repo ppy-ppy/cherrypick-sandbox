@@ -117,7 +117,7 @@ def terasort(vms, env):
             master_vm = vm
             break;
     # master_vm.install('argos')
-    directory='terasort-' + '-' + str(len(vms)) + "-results"
+    directory='terasort-' + vm._config['type'] + '-' + str(len(vms)) + "-results"
     makedirectory(directory)
     iteration=str(1)
     extra_teragen_params = "-Ddfs.blocksize=512M -Dmapreduce.task.io.sort.mb=256"
