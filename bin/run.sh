@@ -88,6 +88,12 @@ configExec() {
         params="$params,terasort:rows=$scale"
     fi
 
+    # If exp is Testdfsio
+    if [ $exp = "testdfsio" ]; then
+        scale=$(echo "$TESTDFSIO_SCALE*10000000" | bc)
+        params="$params,testdfsio:rows=$scale"
+    fi
+
     paramsQ="--params=$params"
     expQ="--benchmark=$expName"
     cloudQ="--cloud=openstack"
