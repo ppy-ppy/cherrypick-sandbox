@@ -88,6 +88,12 @@ configExec() {
         params="$params,terasort:rows=$scale"
     fi
 
+    # If exp is Testdfsio
+    if [ $exp = "testdfsio" ]; then
+        scale=$(echo "$TESTDFSIO_SCALE*10000000" | bc)
+        params="$params,testdfsio:rows=$scale"
+    fi
+
     paramsQ="--params=$params"
     expQ="--benchmark=$expName"
     cloudQ="--cloud=sahara"
@@ -108,16 +114,16 @@ configExec() {
     ########################################
 
     # Setup
-#    echo "> Setting up: $expSpec"
-#    printf "%s\0" $setupQ $noExecQ $paramsQ $expQ $cloudQ $verboseQ | \
-#        xargs -0 bash -c './cb "$@"' --
-#    sleep 10
+    echo "> Setting up: $expSpec"
+    printf "%s\0" $setupQ $noExecQ $paramsQ $expQ $cloudQ $verboseQ | \
+        xargs -0 bash -c './cb "$@"' --
+    sleep 1
 
     # Execute
     echo "> Executing: $expSpec"
     printf "%s\0" $paramsQ $expQ $cloudQ $verboseQ | \
         xargs -0 bash -c './cb "$@"' --
-    sleep 10
+    sleep 1
 
     out="Exit Done"
 
@@ -128,7 +134,7 @@ configExec() {
     printf "%s\0" $teardownQ $noExecQ $paramsQ $expQ $cloudQ $verboseQ | \
         xargs -0 bash -c './cb "$@"' --
         )
-        sleep 10
+        sleep 1
     done
 
     echo "Teardown is complete: $expName"
@@ -136,24 +142,26 @@ configExec() {
 
 export -f configExec
 
-configFor() {
-    exp="$1"
-    iType="$2"
-    iCount="$3"
-    dType="$4"
+#configFor() {
+#    printf "%s\0%s\0%s\0%s\0" $exp $iType $iCount $dType
+#}
 
-    printf "%s\0%s\0%s\0%s\0" $exp $iType $iCount $dType
-}
+parallelization=${1:-no-value}
+exp=${2:-"spark"}
+iType=${3:-"c4.large"}
+iCount=${4:-"1"}
+dType=${5:-""}
 
 printConfigs() {
     echo -n
-    configFor "tpcds" "m1.medium" "4" ""
-    # configFor "spark" "m1.medium" "24" "ebs"
-    # configFor "tpcds" "m1.medium" "32" ""
+#    configFor "kmeans" "m4.xlarge" "1" "ebs"
+#     configFor "spark" "c4.large" "1" ""
+    # configFor "tpcds" "i2.xlarge" "32" ""
+    printf "%s\0%s\0%s\0%s\0" $exp $iType $iCount $dType
 }
 
 usage() {
-    echo -n "run.sh [PARALLELIZATION LEVEL]
+    echo -n "run.sh [PARALLELIZATION LEVEL] [Experiment] [InstanceType] [Machine Count] [Disk Type]
 
 Please add the configs that you want to run to the printConfigs
 function inside the script.  The syntax is:
@@ -170,7 +178,7 @@ Feel free to change that within this file.
 "
 }
 
-parallelization=${1:-no-value}
+
 
 ########################################
 # PARALLELIZATION
