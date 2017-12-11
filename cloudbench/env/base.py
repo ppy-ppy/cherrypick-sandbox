@@ -1,5 +1,5 @@
 from cloudbench.env.config.xml_config import EnvXmlConfig
-from cloudbench.env.clouds import AzureCloud, AwsCloud, GcloudCloud, LocalCloud, OpenstackCloud
+from cloudbench.env.clouds import AzureCloud, AwsCloud, GcloudCloud, LocalCloud, OpenstackCloud, SaharaCloud
 from cloudbench.executor import Executor
 from cloudbench.storage import AzureStorage, FileStorage, JsonStorage
 from cloudbench.util import parallel
@@ -140,6 +140,8 @@ class Env(object):
             self._manager = LocalCloud(self)
         elif self._cloud == 'openstack':
             self._manager = OpenstackCloud(self)
+        elif self._cloud == 'sahara':
+            self._manager = SaharaCloud(self)
 
         return self._manager
 

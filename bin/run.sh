@@ -90,7 +90,7 @@ configExec() {
 
     paramsQ="--params=$params"
     expQ="--benchmark=$expName"
-    cloudQ="--cloud=openstack"
+    cloudQ="--cloud=sahara"
     noExecQ="--no-execute"
     setupQ="--setup"
     teardownQ="--teardown"
@@ -108,10 +108,10 @@ configExec() {
     ########################################
 
     # Setup
-    echo "> Setting up: $expSpec"
-    printf "%s\0" $setupQ $noExecQ $paramsQ $expQ $cloudQ $verboseQ | \
-        xargs -0 bash -c './cb "$@"' --
-    sleep 10
+#    echo "> Setting up: $expSpec"
+#    printf "%s\0" $setupQ $noExecQ $paramsQ $expQ $cloudQ $verboseQ | \
+#        xargs -0 bash -c './cb "$@"' --
+#    sleep 10
 
     # Execute
     echo "> Executing: $expSpec"
@@ -147,9 +147,9 @@ configFor() {
 
 printConfigs() {
     echo -n
-    configFor "kmeans" "m4.xlarge" "4" "ebs"
-    # configFor "spark" "c4.large" "24" "ebs"
-    # configFor "tpcds" "i2.xlarge" "32" ""
+    configFor "tpcds" "m1.medium" "4" ""
+    # configFor "spark" "m1.medium" "24" "ebs"
+    # configFor "tpcds" "m1.medium" "32" ""
 }
 
 usage() {

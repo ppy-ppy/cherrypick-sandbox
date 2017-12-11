@@ -5,6 +5,7 @@ from cloudbench.cloudera.cloudera import Cloudera
 import os
 import re
 import time
+from cloudbench.env.clouds import config
 
 TIMEOUT=21600
 
@@ -69,47 +70,74 @@ def setup_disks(env, vms):
     parallel(setup_vm_disks, vms)
 
 def setup_base(env, vms):
-    setup_disks(env, vms)
-    parallel(lambda vm: vm.install('java8'), vms)
-    parallel(lambda vm: vm.install('cloudera'), vms)
-    parallel(lambda vm: vm.install('git'), vms)
+    # setup_disks(env, vms)
+    # parallel(lambda vm: vm.install('java8'), vms)
+    # parallel(lambda vm: vm.install('cloudera'), vms)
+    # parallel(lambda vm: vm.install('git'), vms)
     parallel(lambda vm: vm.install('argos'), vms)
 
 def terasort(vms, env):
     hadoop = setup_hadoop(env, vms)
-    print "Master is: %s" % hadoop.master.name
-
-    directory='terasort-' + hadoop.master.type + '-' + str(len(vms)) + "-results"
+    # print "Master is: %s" % hadoop.master.name
+    #
+    # directory='terasort-' + hadoop.master.type + '-' + str(len(vms)) + "-results"
+    # makedirectory(directory)
+    # iteration=str(1)
+    #
+    # extra_teragen_params = "-Ddfs.blocksize=512M -Dmapreduce.task.io.sort.mb=256"
+    #
+    # hadoop.master.execute("sudo service hadoop-hdfs-namenode restart")
+    # hadoop.master.execute("sudo service hadoop-hdfs-datanode restart")
+    # hadoop.master.execute("sudo service hadoop-yarn-resourcemanager restart")
+    #
+    # mapper_count = int(4 * int(sum(map(lambda vm: vm.cpus(), vms))) * 0.8)
+    # hadoop.execute('sudo -u hdfs hadoop jar /usr/lib/hadoop-0.20-mapreduce/hadoop-examples-2.6.0-mr1-cdh5*.jar teragen {2} -D mapred.map.tasks={0} {1} /terasort-input'.format(mapper_count, env.param('terasort:rows'), extra_teragen_params))
+    #
+    # # Drop file caches to be more accurate for amount of reads and writes
+    # parallel(lambda vm: vm.script("sync; echo 3 > /proc/sys/vm/drop_caches"), vms)
+    #
+    # reducer_count = int(sum(map(lambda vm: vm.cpus(), vms)) * 0.8)
+    #
+    # extra_terasort_params = "-Ddfs.blocksize=512M -Dmapreduce.task.io.sort.factor=100 -Dmapreduce.task.io.sort.mb=384 -Dio.file.buffer.size=131072"
+    # monitor_start(vms)
+    # hadoop.execute('/usr/bin/time -f \'%e\' -o terasort.out sudo -u hdfs hadoop jar /usr/lib/hadoop-0.20-mapreduce/hadoop-examples-2.6.0-mr1-cdh5*.jar terasort {1} -D mapred.reduce.tasks={0} /terasort-input /terasort-output >output.log 2>&1'.format(str(reducer_count), extra_terasort_params))
+    # monitor_finish(vms, directory, iteration)
+    #
+    # terasort_time = hadoop.master.script('tail -n1 terasort.out').strip()
+    # terasort_out = hadoop.master.script('cat output.log').strip()
+    # file_name = hadoop.master.type
+    # with open(os.path.join(directory, str(iteration), file_name + ".time"), 'w+') as f:
+    #     f.write("0," + str(terasort_time))
+    #
+    # with open(os.path.join(directory, str(iteration), file_name + ".out"), 'w+') as f:
+    #     f.write(terasort_out)
+    master_vm = None
+    for vm in vms:
+        if vm.name == 'master':
+            master_vm = vm
+            break;
+    # master_vm.install('argos')
+    directory='terasort-' + '-' + str(len(vms)) + "-results"
     makedirectory(directory)
     iteration=str(1)
-
     extra_teragen_params = "-Ddfs.blocksize=512M -Dmapreduce.task.io.sort.mb=256"
-
-    hadoop.master.execute("sudo service hadoop-hdfs-namenode restart")
-    hadoop.master.execute("sudo service hadoop-hdfs-datanode restart")
-    hadoop.master.execute("sudo service hadoop-yarn-resourcemanager restart")
-
     mapper_count = int(4 * int(sum(map(lambda vm: vm.cpus(), vms))) * 0.8)
-    hadoop.execute('sudo -u hdfs hadoop jar /usr/lib/hadoop-0.20-mapreduce/hadoop-examples-2.6.0-mr1-cdh5*.jar teragen {2} -D mapred.map.tasks={0} {1} /terasort-input'.format(mapper_count, env.param('terasort:rows'), extra_teragen_params))
-
-    # Drop file caches to be more accurate for amount of reads and writes
-    parallel(lambda vm: vm.script("sync; echo 3 > /proc/sys/vm/drop_caches"), vms)
-
+    master_vm.script('sudo su hadoop -l -c "hadoop jar /opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar teragen {2} -D mapred.map.tasks={0} {1} /terasort-input_lb_2"'.format(mapper_count, '100', extra_teragen_params))
     reducer_count = int(sum(map(lambda vm: vm.cpus(), vms)) * 0.8)
-
     extra_terasort_params = "-Ddfs.blocksize=512M -Dmapreduce.task.io.sort.factor=100 -Dmapreduce.task.io.sort.mb=384 -Dio.file.buffer.size=131072"
     monitor_start(vms)
-    hadoop.execute('/usr/bin/time -f \'%e\' -o terasort.out sudo -u hdfs hadoop jar /usr/lib/hadoop-0.20-mapreduce/hadoop-examples-2.6.0-mr1-cdh5*.jar terasort {1} -D mapred.reduce.tasks={0} /terasort-input /terasort-output >output.log 2>&1'.format(str(reducer_count), extra_terasort_params))
+    master_vm.script('/usr/bin/time -f \'%e\' -o terasort.out sudo su hadoop -l -c "hadoop jar /opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar terasort /terasort-input_lb_2 /terasort-output_lb_2 > /opt/output.log 2>&1"')
     monitor_finish(vms, directory, iteration)
-
-    terasort_time = hadoop.master.script('tail -n1 terasort.out').strip()
-    terasort_out = hadoop.master.script('cat output.log').strip()
-    file_name = hadoop.master.type
+    terasort_time = master_vm.script('tail -n1 terasort.out').strip()
+    terasort_out = master_vm.script('cat /opt/output.log').strip()
+    file_name = master_vm.type
     with open(os.path.join(directory, str(iteration), file_name + ".time"), 'w+') as f:
         f.write("0," + str(terasort_time))
 
     with open(os.path.join(directory, str(iteration), file_name + ".out"), 'w+') as f:
         f.write(terasort_out)
+
+
 
 def run(env):
     vms = env.virtual_machines().values()

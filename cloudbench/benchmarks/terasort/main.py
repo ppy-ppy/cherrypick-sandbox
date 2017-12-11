@@ -68,12 +68,12 @@ def terasort_with_argos_run(vms, env):
     cluster.setup()
     cluster.reset()
 
-    output = cluster.execute('"/usr/bin/time -f \'%e\' -o terasort.out hadoop jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar teragen -Dmapred.map.tasks={1} {2} {0}"'.format(TERASORT_INPUT, env.param('terasort:mappers'), env.param('terasort:rows')))
+    output = cluster.execute('"/usr/bin/time -f \'%e\' -o terasort.out hadoop jar /opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar teragen -Dmapred.map.tasks={1} {2} {0}"'.format(TERASORT_INPUT, env.param('terasort:mappers'), env.param('terasort:rows')))
     teragen_time = cluster.master.script('sudo su - hduser -c "tail -n1 terasort.out"').strip()
 
     argos_start(vms)
 
-    cluster.execute('"/usr/bin/time -f \'%e\' -o terasort.out hadoop jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar terasort -Dmapred.reduce.tasks={2} {0} {1} >output.log 2>&1"'.format(TERASORT_INPUT, TERASORT_OUTPUT, env.param('terasort:reducers')))
+    cluster.execute('"/usr/bin/time -f \'%e\' -o terasort.out hadoop jar /opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar terasort -Dmapred.reduce.tasks={2} {0} {1} >output.log 2>&1"'.format(TERASORT_INPUT, TERASORT_OUTPUT, env.param('terasort:reducers')))
 
     argos_finish(vms)
 
