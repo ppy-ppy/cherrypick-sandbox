@@ -1,6 +1,7 @@
 import shlex
 import subprocess
 import threading
+import os
 
 class Rsync(object):
     def __init__(self, vm, connect_string):
@@ -24,16 +25,18 @@ class Rsync(object):
     def send(self, source, dest):
         """ Sends the source directory to the destination directory """
         self._lock.acquire()
+        key_path = os.path.abspath('..') + '/cherrypick.pem'
         self._process = subprocess.Popen(shlex.split(
-            "rsync -avz -e 'ssh -i /home/ubuntu/Desktop/cherrypick-20171206/cherrypick.pem -o StrictHostKeyChecking=no -q' {0} {1}:{2}".format(
+            "rsync -avz -e 'ssh -i " + key_path + " -o StrictHostKeyChecking=no -q' {0} {1}:{2}".format(
                     source, self.connect_string, dest)), 
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def recv(self, source, dest):
         self._lock.acquire()
-        print("rsync -avz -e 'ssh -i /home/ubuntu/Desktop/cherrypick-20171206/cherrypick.pem -o StrictHostKeyChecking=no -q' {0}:{1} {2}".format(self.connect_string, source , dest))
+        key_path = os.path.abspath('..') + '/cherrypick.pem'
+        print("rsync -avz -e 'ssh -i " + key_path + " -o StrictHostKeyChecking=no -q' {0}:{1} {2}".format(self.connect_string, source , dest))
         self._process = subprocess.Popen(shlex.split(
-            "rsync -avz -e 'ssh -i /home/ubuntu/Desktop/cherrypick-20171206/cherrypick.pem -o StrictHostKeyChecking=no -q' {0}:{1} {2}".format(
+            "rsync -avz -e 'ssh -i " + key_path + " -o StrictHostKeyChecking=no -q' {0}:{1} {2}".format(
                     self.connect_string, source , dest)), 
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
