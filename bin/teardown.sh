@@ -113,18 +113,6 @@ configExec() {
     # Run the experiment
     ########################################
 
-    # Setup
-    echo "> Setting up: $expSpec"
-    printf "%s\0" $setupQ $noExecQ $paramsQ $expQ $cloudQ $verboseQ | \
-        xargs -0 bash -c './cb "$@"' --
-    sleep 1
-
-    # Execute
-    echo "> Executing: $expSpec"
-    printf "%s\0" $paramsQ $expQ $cloudQ $verboseQ | \
-        xargs -0 bash -c './cb "$@"' --
-    sleep 1
-
     out="Exit Done"
 
     # Teardown

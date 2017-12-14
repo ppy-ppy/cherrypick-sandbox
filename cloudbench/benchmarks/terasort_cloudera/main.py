@@ -27,23 +27,23 @@ def monitor_finish(vms, directory, iteration):
     # parallel(lambda vm: vm.stop_monitor(), vms)
     # parallel(lambda vm: vm.download_monitor(vm.name + '-disk-usage.log'), vms)
 
-    parallel(lambda vm: vm.script('sudo killall -SIGINT argos'), vms)
-    time.sleep(30)
-    parallel(lambda vm: vm.script('chmod -R 777 ~/argos/proc'), vms)
-
-    # Delete empty files
-    parallel(lambda vm: vm.script('find ~/argos/proc -type f -empty -delete'), vms)
-    # Delete empty directories
-    parallel(lambda vm: vm.script('find ~/argos/proc -type d -empty -delete'), vms)
+    # parallel(lambda vm: vm.script('sudo killall -SIGINT argos'), vms)
+    # time.sleep(30)
+    # parallel(lambda vm: vm.script('chmod -R 777 ~/argos/proc'), vms)
+    #
+    # # Delete empty files
+    # parallel(lambda vm: vm.script('find ~/argos/proc -type f -empty -delete'), vms)
+    # # Delete empty directories
+    # parallel(lambda vm: vm.script('find ~/argos/proc -type d -empty -delete'), vms)
 
     subdir=os.path.join(directory, str(iteration))
     makedirectory(subdir)
 
     # Save argos results
-    parallel(lambda vm: vm.recv('~/argos/proc', os.path.join(subdir, vm.name + '-proc')), vms)
-
-    # Save argos output
-    parallel(lambda vm: vm.recv('~/argos/argos.out', os.path.join(subdir, vm.name + '-argos.out')), vms)
+    # parallel(lambda vm: vm.recv('~/argos/proc', os.path.join(subdir, vm.name + '-proc')), vms)
+    #
+    # # Save argos output
+    # parallel(lambda vm: vm.recv('~/argos/argos.out', os.path.join(subdir, vm.name + '-argos.out')), vms)
 
 
 def setup_hadoop(env, vms):
@@ -77,7 +77,7 @@ def setup_base(env, vms):
     parallel(lambda vm: vm.install('argos'), vms)
 
 def terasort(vms, env):
-    hadoop = setup_hadoop(env, vms)
+    # hadoop = setup_hadoop(env, vms)
     # print "Master is: %s" % hadoop.master.name
     #
     # directory='terasort-' + hadoop.master.type + '-' + str(len(vms)) + "-results"
@@ -115,28 +115,35 @@ def terasort(vms, env):
     for vm in vms:
         if vm.name == 'master':
             master_vm = vm
-            break;
+            break
     # master_vm.install('argos')
     directory='terasort-' + vm._config['type'] + '-' + str(len(vms)) + "-results"
     makedirectory(directory)
     iteration=str(1)
     extra_teragen_params = "-Ddfs.blocksize=512M -Dmapreduce.task.io.sort.mb=256"
     mapper_count = int(4 * int(sum(map(lambda vm: vm.cpus(), vms))) * 0.8)
-    master_vm.script('sudo su hadoop -l -c "hadoop jar /opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar teragen {2} -D mapred.map.tasks={0} {1} /terasort-input_lb_2"'.format(mapper_count, '100', extra_teragen_params))
+    master_vm.script('sudo su hadoop -l -c "hadoop fs -rm -r /terasort*"')
+    master_vm.script('sudo su hadoop -l -c '
+                     '"hadoop jar /opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar '
+                     'teragen {0} /terasort-input_lb_2"'
+                     .format('100'))
     reducer_count = int(sum(map(lambda vm: vm.cpus(), vms)) * 0.8)
-    extra_terasort_params = "-Ddfs.blocksize=512M -Dmapreduce.task.io.sort.factor=100 -Dmapreduce.task.io.sort.mb=384 -Dio.file.buffer.size=131072"
-    monitor_start(vms)
-    master_vm.script('/usr/bin/time -f \'%e\' -o terasort.out sudo su hadoop -l -c "hadoop jar /opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar terasort /terasort-input_lb_2 /terasort-output_lb_2 > /opt/output.log 2>&1"')
+    extra_terasort_params = "-Ddfs.blocksize=512M -Dmapreduce.task.io.sort.factor=100 " \
+                            "-Dmapreduce.task.io.sort.mb=384 -Dio.file.buffer.size=131072"
+    # monitor_start(vms)
+    master_vm.script('/usr/bin/time -f \'%e\' -o terasort.out sudo su hadoop -l -c "hadoop jar '
+                     '/opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar '
+                     'terasort /terasort-input_lb_2 /terasort-output_lb_2 > /tmp/output.log 2>&1"')
+
     monitor_finish(vms, directory, iteration)
     terasort_time = master_vm.script('tail -n1 terasort.out').strip()
-    terasort_out = master_vm.script('cat /opt/output.log').strip()
+    terasort_out = master_vm.script('cat /tmp/output.log').strip()
     file_name = master_vm.type
     with open(os.path.join(directory, str(iteration), file_name + ".time"), 'w+') as f:
         f.write("0," + str(terasort_time))
 
     with open(os.path.join(directory, str(iteration), file_name + ".out"), 'w+') as f:
         f.write(terasort_out)
-
 
 
 def run(env):

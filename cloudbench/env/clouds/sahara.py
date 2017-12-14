@@ -1,5 +1,6 @@
 import subprocess
 import base64
+import os
 
 from cloudbench import constants
 from cloudbench.util import Debug, parallel, rate_limit
@@ -29,7 +30,8 @@ class SaharaCloud(Cloud):
     def __init__(self, *args, **kwargs):
         super(SaharaCloud, self).__init__(*args, **kwargs)
         constants.DEFAULT_VM_USERNAME = 'ubuntu'
-        constants.DEFAULT_VM_PRIVATE_KEY= '/home/ubuntu/Desktop/cherrypick-20171206/cherrypick.pem'
+        key_path = os.path.abspath('..') + '/cherrypick.pem'
+        constants.DEFAULT_VM_PRIVATE_KEY = key_path
 
     def execute(self, command, obj={}):
         ret = super(SaharaCloud, self).execute(command, obj)
