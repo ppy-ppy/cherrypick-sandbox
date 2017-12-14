@@ -11,7 +11,7 @@ import time
 
 TIMEOUT=21600
 
-TPCDS_SCALE=2
+TPCDS_SCALE=1
 GenerateTPCDS = """
 import com.databricks.spark.sql.perf.tpcds.Tables
 
@@ -153,11 +153,15 @@ def tpcds(vms, env):
 
     #
     def exec_tpcds_script(master, slave, script, output, extra=""):
-        cmdTpl = "sudo su hadoop -l -c '/opt/spark/bin/spark-shell --jars {0} --conf spark.driver.memory={1}m -i {2} --conf spark.executor.memory={4}m {5} |& tee {3}'"
+        # cmdTpl = "sudo su hadoop -l -c '/opt/spark/bin/spark-shell --jars {0} --conf spark.driver.memory={1}m -i {2} --conf spark.executor.memory={4}m {5} |& tee {3}'"
+        # cmd = cmdTpl.format(os.path.join(SPARK_SQL_PERF_DIR,
+        #     "target", "scala-2.11", "spark-sql-perf_2.11-0.4.3.jar"),
+        #     spark_driver_memory(master),
+        #     script, output, spark_executor_memory(slave), extra)
+        cmdTpl = "sudo su hadoop -l -c '/opt/spark/bin/spark-shell --jars {0} -i {1} |& tee {2}'"
         cmd = cmdTpl.format(os.path.join(SPARK_SQL_PERF_DIR,
-            "target", "scala-2.11", "spark-sql-perf_2.11-0.4.3.jar"),
-            spark_driver_memory(master),
-            script, output, spark_executor_memory(slave), extra)
+                                         "target", "scala-2.11", "spark-sql-perf_2.11-0.4.3.jar"),
+                            script, output )
         master.script(cmd)
 
     # For some reason the Namenode was failing here ...
@@ -206,8 +210,8 @@ def tpcds(vms, env):
     with open(os.path.join(directory, str(iteration), master_vm._config['type'] + '.time'), 'w+') as f:
         f.write('0,%s' % str(end - start))
 
-    # master_vm.recv("~/spark-sql-perf/gen.log", os.path.join(directory, str(iteration), "gen.log"))
-    # master_vm.recv("~/spark-sql-perf/exe.log", os.path.join(directory, str(iteration), "exe.log"))
+    master_vm.recv("/home/ubuntu/spark-sql-perf/gen.log", os.path.join(directory, str(iteration), "gen.log"))
+    master_vm.recv("/home/ubuntu/spark-sql-perf/exe.log", os.path.join(directory, str(iteration), "exe.log"))
 
 
 def run(env):

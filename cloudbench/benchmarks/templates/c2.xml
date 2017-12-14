@@ -4,8 +4,8 @@
     </locations>
 
     <virtual-machines>
-        <virtual-machine name='vm1' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
-        <virtual-machine name='vm2' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
+        <virtual-machine name='master' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
+        <virtual-machine name='slave-0' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
     </virtual-machines>
 
     <virtual-networks>
@@ -46,4 +46,9 @@
             <add-values name='vn1' address-range='10.0.0.0/20' />
         </virtual-networks>
     </gcloud>
+
+    <sahara>
+        <config name='ubuntu' value='sandbox' />
+        <config name='us'   value='us-central1-b' />
+    </sahara>
 </config>
