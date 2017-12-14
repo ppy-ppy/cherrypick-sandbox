@@ -76,40 +76,65 @@ def setup_base(env, vms):
     parallel(lambda vm: vm.install('argos'), vms)
 
 def testdfsio(vms, env):
-    hadoop = setup_hadoop(env, vms)
-    print "Master is: %s" % hadoop.master.name
-
-    directory='testdfsio-' + hadoop.master.type + '-' + str(len(vms)) + "-results"
+    # hadoop = setup_hadoop(env, vms)
+    # print "Master is: %s" % hadoop.master.name
+    #
+    # directory='testdfsio-' + hadoop.master.type + '-' + str(len(vms)) + "-results"
+    # makedirectory(directory)
+    # iteration=str(1)
+    #
+    # extra_teragen_params = "-Ddfs.blocksize=512M -Dmapreduce.task.io.sort.mb=256"
+    #
+    # hadoop.master.execute("sudo service hadoop-hdfs-namenode restart")
+    # hadoop.master.execute("sudo service hadoop-hdfs-datanode restart")
+    # hadoop.master.execute("sudo service hadoop-yarn-resourcemanager restart")
+    #
+    # mapper_count = int(4 * int(sum(map(lambda vm: vm.cpus(), vms))) * 0.8)
+    # hadoop.execute('sudo -u hdfs hadoop jar /usr/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.0-tests.jar TestDFSIO -write -nrFiles 10 -fileSize 10MB'.format(mapper_count, env.param('terasort:rows'), extra_teragen_params))
+    #
+    # # Drop file caches to be more accurate for amount of reads and writes
+    # parallel(lambda vm: vm.script("sync; echo 3 > /proc/sys/vm/drop_caches"), vms)
+    #
+    # reducer_count = int(sum(map(lambda vm: vm.cpus(), vms)) * 0.8)
+    #
+    # extra_terasort_params = "-Ddfs.blocksize=512M -Dmapreduce.task.io.sort.factor=100 -Dmapreduce.task.io.sort.mb=384 -Dio.file.buffer.size=131072"
+    # monitor_start(vms)
+    # hadoop.execute('sudo -u hdfs hadoop jar /usr/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.0-tests.jar TestDFSIO -write -nrFiles 10 -fileSize 10MB'.format(str(reducer_count), extra_terasort_params))
+    # monitor_finish(vms, directory, iteration)
+    #
+    # terasort_time = hadoop.master.script('tail -n1 terasort.out').strip()
+    # terasort_out = hadoop.master.script('cat output.log').strip()
+    # file_name = hadoop.master.type
+    # with open(os.path.join(directory, str(iteration), file_name + ".time"), 'w+') as f:
+    #     f.write("0," + str(terasort_time))
+    #
+    # with open(os.path.join(directory, str(iteration), file_name + ".out"), 'w+') as f:
+    #     f.write(terasort_out)
+    master_vm = None
+    for vm in vms:
+        if vm.name == 'master':
+            master_vm = vm
+            break;
+    # master_vm.install('argos')
+    directory = 'testdfsio-' + vm._config['type'] + '-' + str(len(vms)) + "-results"
     makedirectory(directory)
-    iteration=str(1)
-
-    extra_teragen_params = "-Ddfs.blocksize=512M -Dmapreduce.task.io.sort.mb=256"
-
-    hadoop.master.execute("sudo service hadoop-hdfs-namenode restart")
-    hadoop.master.execute("sudo service hadoop-hdfs-datanode restart")
-    hadoop.master.execute("sudo service hadoop-yarn-resourcemanager restart")
-
-    mapper_count = int(4 * int(sum(map(lambda vm: vm.cpus(), vms))) * 0.8)
-    hadoop.execute('sudo -u hdfs hadoop jar /usr/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.0-tests.jar TestDFSIO -write -nrFiles 10 -fileSize 10MB'.format(mapper_count, env.param('terasort:rows'), extra_teragen_params))
-
-    # Drop file caches to be more accurate for amount of reads and writes
-    parallel(lambda vm: vm.script("sync; echo 3 > /proc/sys/vm/drop_caches"), vms)
-
-    reducer_count = int(sum(map(lambda vm: vm.cpus(), vms)) * 0.8)
-
-    extra_terasort_params = "-Ddfs.blocksize=512M -Dmapreduce.task.io.sort.factor=100 -Dmapreduce.task.io.sort.mb=384 -Dio.file.buffer.size=131072"
-    monitor_start(vms)
-    hadoop.execute('sudo -u hdfs hadoop jar /usr/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.0-tests.jar TestDFSIO -write -nrFiles 10 -fileSize 10MB'.format(str(reducer_count), extra_terasort_params))
-    monitor_finish(vms, directory, iteration)
-
-    terasort_time = hadoop.master.script('tail -n1 terasort.out').strip()
-    terasort_out = hadoop.master.script('cat output.log').strip()
-    file_name = hadoop.master.type
+    iteration = str(1)
+    subdir = os.path.join(directory, str(iteration))
+    makedirectory(subdir)
+    master_vm.script(
+        'sudo su hadoop -l -c "hadoop jar /opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.1-tests.jar TestDFSIO -write -nrFiles {0} -fileSize {1}MB"'.format(
+            '10', '100'))
+    master_vm.script(
+        '/usr/bin/time -f \'%e\' -o testdfsio.out sudo su hadoop -l -c "hadoop jar /opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.1-tests.jar TestDFSIO -read -nrFiles {0} -fileSize {1} > /home/hadoop/output.log 2>&1"'.format(
+            '10', '100'))
+    testdfsio_time = master_vm.script('tail -n1 testdfsio.out').strip()
+    testdfsio_out = master_vm.script('cat /home/hadoop/output.log').strip()
+    file_name = master_vm.type
     with open(os.path.join(directory, str(iteration), file_name + ".time"), 'w+') as f:
-        f.write("0," + str(terasort_time))
+        f.write("0," + str(testdfsio_time))
 
     with open(os.path.join(directory, str(iteration), file_name + ".out"), 'w+') as f:
-        f.write(terasort_out)
+        f.write(testdfsio_out)
 
 def run(env):
     vms = env.virtual_machines().values()

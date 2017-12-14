@@ -25,15 +25,15 @@ class Rsync(object):
         """ Sends the source directory to the destination directory """
         self._lock.acquire()
         self._process = subprocess.Popen(shlex.split(
-            "rsync -avz -e 'ssh -i ../config/cloud.key -oStrictHostKeyChecking=no -q' {0} {1}:{2}".format(
+            "rsync -avz -e 'ssh -i /home/ubuntu/Desktop/cherrypick-20171206/cherrypick.pem -o StrictHostKeyChecking=no -q' {0} {1}:{2}".format(
                     source, self.connect_string, dest)), 
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def recv(self, source, dest):
         self._lock.acquire()
-        print("rsync -avz -e 'ssh -i ../config/cloud.key -oStrictHostKeyChecking=no -q' {0}:{1} {2}".format(self.connect_string, source , dest))
+        print("rsync -avz -e 'ssh -i /home/ubuntu/Desktop/cherrypick-20171206/cherrypick.pem -o StrictHostKeyChecking=no -q' {0}:{1} {2}".format(self.connect_string, source , dest))
         self._process = subprocess.Popen(shlex.split(
-            "rsync -avz -e 'ssh -i ../config/cloud.key -oStrictHostKeyChecking=no -q' {0}:{1} {2}".format(
+            "rsync -avz -e 'ssh -i /home/ubuntu/Desktop/cherrypick-20171206/cherrypick.pem -o StrictHostKeyChecking=no -q' {0}:{1} {2}".format(
                     self.connect_string, source , dest)), 
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 

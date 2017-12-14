@@ -3,7 +3,7 @@ class Config():
     project_id = '06fbb2ce6b9b4c01bf9e44290e6b959e'
     user_id = 'ac5ea82b7dde4c79940cf308a5e841f3'
     password = 'admin'
-    security_groups = 'default'
+    security_groups = 'open'
     availability_zone = 'nova'
     diskConfig = 'AUTO'
     network_name = 'demo-net'
@@ -11,9 +11,9 @@ class Config():
     plugin_name = 'sandbox'
     hadoop_version = '2.7.1'
     floating_ip_pool_id = ''
-    master_nodegroup_template_name = 'tpcds-master'
-    slave_nodegroup_template_name = 'tpcds-slave'
-    cluster_template_name = 'tpcds'
-    cluster_name = 'tpcds'
+    master_nodegroup_template_name = 'd1-xlarge-master'
+    slave_nodegroup_template_name = 'd1-xlarge-slave'
+    cluster_template_name = 'd1-xlarge'
+    cluster_name = 'd1-xlarge'
     master_node_count = 1
     slave_node_count = 3

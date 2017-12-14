@@ -2,6 +2,7 @@ from cloudbench.ssh import WaitUntilFinished, WaitForSeconds
 from cloudbench.util import Debug, parallel
 from cloudbench.cloudera.cloudera import Cloudera
 from cloudbench.apps.spark_sql_perf import SPARK_SQL_PERF_DIR
+from cloudbench.apps.spark_sql_perf import install as install_spark_sql_perf
 
 import os
 import random
@@ -14,8 +15,9 @@ TPCDS_SCALE=2
 GenerateTPCDS = """
 import com.databricks.spark.sql.perf.tpcds.Tables
 
+val sqlContext = new org.apache.spark.sql.SQLContext(sc)
 val dsdgenDir = "/home/ubuntu/tpcds-kit/tools"
-val dbName = "tpcdsdb"
+val dbName = "tpcdsdb_lb"
 val scaleFactor = {scaleFactor}
 val tables = new Tables(sqlContext, dsdgenDir, scaleFactor)
 val location = "/user/spark/tpcds"
@@ -23,23 +25,24 @@ val format = "parquet"
 
 tables.genData(location, format, true, true, true, true, true)
 tables.createExternalTables(location, format, dbName, true)
-exit
+:quit
 """
 
 ExecuteTPCDS = """
 import com.databricks.spark.sql.perf.tpcds.TPCDS
 
-val dbName = "tpcdsdb"
-sqlContext.sql("USE tpcdsdb")
+val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+val dbName = "tpcdsdb_lb"
+sqlContext.sql("USE tpcdsdb_lb")
 sc.setLogLevel("WARN")
 val tpcds = new TPCDS()
 val expt = tpcds.runExperiment(tpcds.cherryPickQueries)
 expt.waitForFinish(10000)
 
 expt.html
-exit
+:quit
 """
-
+# cherryPickQueries
 def argos_start(vms, directory, iteration):
     parallel(lambda vm: vm.script('rm -rf ~/argos/proc'), vms)
     parallel(lambda vm: vm.script('cd argos; sudo nohup src/argos >argos.out 2>&1 &'), vms)
@@ -132,10 +135,10 @@ def spark_driver_memory(vm):
     return int(ret)
 
 def tpcds(vms, env):
-    spark = setup_spark(vms, env)
+    # spark = setup_spark(vms, env)
     def prepare_spark(vm):
         vm.script('chown -R ubuntu:ubuntu %s' % SPARK_SQL_PERF_DIR)
-        vm.script('cd %s; sudo -u ubuntu ./build/sbt package' % SPARK_SQL_PERF_DIR)
+        # vm.script('cd %s; sudo -u ubuntu ./build/sbt package' % SPARK_SQL_PERF_DIR)
 
     def write_file(vm, fName, content):
         vm.script("sudo cat <<EOT > {0}\n{1}\nEOT".format(fName, content))
@@ -143,28 +146,37 @@ def tpcds(vms, env):
     genFile = os.path.join(SPARK_SQL_PERF_DIR, "gen.cmd")
     exeFile = os.path.join(SPARK_SQL_PERF_DIR, "exe.cmd")
 
-    # 
+    #
     def load_tpcds_scripts(vm):
         write_file(vm, genFile, GenerateTPCDS.format(scaleFactor=TPCDS_SCALE))
         write_file(vm, exeFile, ExecuteTPCDS)
 
     #
     def exec_tpcds_script(master, slave, script, output, extra=""):
-        cmdTpl = "spark-shell --jars {0} --conf spark.driver.memory={1}m -i {2} --conf spark.executor.memory={4}m {5} |& tee {3}"
-        cmd = cmdTpl.format(os.path.join(SPARK_SQL_PERF_DIR, 
-            "target", "scala-2.10", "spark-sql-perf_2.10-0.3.2.jar"),
+        cmdTpl = "sudo su hadoop -l -c '/opt/spark/bin/spark-shell --jars {0} --conf spark.driver.memory={1}m -i {2} --conf spark.executor.memory={4}m {5} |& tee {3}'"
+        cmd = cmdTpl.format(os.path.join(SPARK_SQL_PERF_DIR,
+            "target", "scala-2.11", "spark-sql-perf_2.11-0.4.3.jar"),
             spark_driver_memory(master),
             script, output, spark_executor_memory(slave), extra)
         master.script(cmd)
 
     # For some reason the Namenode was failing here ...
     # TODO: debug here ...
-    spark.master.script("sudo service hadoop-hdfs-namenode restart")
-    spark.master.script("sudo service hadoop-yarn-resourcemanager restart")
-    spark.master.script("sudo -u hdfs hdfs dfs -mkdir -p /user/spark")
-    
+    master_vm = None
+    slave_vm = None
+    for vm in vms:
+        if vm.name == 'master':
+            master_vm = vm
+        if vm.name == 'slave-0':
+            slave_vm = vm
+    # spark.master.script("sudo service hadoop-hdfs-namenode restart")
+    # spark.master.script("sudo service hadoop-yarn-resourcemanager restart")
+    master_vm.script("sudo -u hdfs hdfs dfs -mkdir -p /user/spark")
+
+    install_spark_sql_perf(master_vm)
+
     # Make hdfs read/write/executable by anyone
-    spark.master.script("sudo -u hdfs hdfs dfs chmod -R 777 /")
+    master_vm.script("sudo -u hdfs hdfs dfs chmod -R 777 /")
 
     # prepare spark
     parallel(prepare_spark, vms)
@@ -172,28 +184,30 @@ def tpcds(vms, env):
     # Save the TPC-DS scripts to remote virtual machines
     parallel(load_tpcds_scripts, vms)
 
-    directory='tpcds-' + spark.master.type + '-' + str(len(vms)) + "-results"
+    directory='tpcds-' + master_vm._config['type'] + '-' + str(len(vms)) + "-results"
     makedirectory(directory)
     iteration=str(1)
+    subdir = os.path.join(directory, str(iteration))
+    makedirectory(subdir)
 
     # execute scripts
     ## Generate TPCDS data
-    exec_tpcds_script(spark.master, spark.workers[0], genFile, os.path.join(SPARK_SQL_PERF_DIR, "gen.log"), "--conf spark.yarn.executor.memoryOverhead=768")
-
+    exec_tpcds_script(master_vm, slave_vm, genFile, os.path.join(SPARK_SQL_PERF_DIR, "gen.log"), "--conf spark.yarn.executor.memoryOverhead=768")
+    # os.path.join(SPARK_SQL_PERF_DIR, "gen.log")
     parallel(lambda vm: vm.script("sync; echo 3 > /proc/sys/vm/drop_caches"), vms)
     ## Execute TPCDS queries
-    argos_start(vms, directory, iteration)
+    # argos_start(vms, directory, iteration)
     start = time.time()
-    exec_tpcds_script(spark.master, spark.workers[0], exeFile, os.path.join(SPARK_SQL_PERF_DIR, "exe.log"))
+    exec_tpcds_script(master_vm, slave_vm, exeFile, os.path.join(SPARK_SQL_PERF_DIR, "exe.log"))
     end = time.time()
-    argos_finish(vms, directory, iteration)
+    # argos_finish(vms, directory, iteration)
 
-    file_name = spark.master.type
-    with open(os.path.join(directory, str(iteration), spark.master.type + '.time'), 'w+') as f:
+    file_name = master_vm._config['type']
+    with open(os.path.join(directory, str(iteration), master_vm._config['type'] + '.time'), 'w+') as f:
         f.write('0,%s' % str(end - start))
 
-    spark.master.recv("~/spark-sql-perf/gen.log", os.path.join(directory, str(iteration), "gen.log"))
-    spark.master.recv("~/spark-sql-perf/exe.log", os.path.join(directory, str(iteration), "exe.log"))
+    # master_vm.recv("~/spark-sql-perf/gen.log", os.path.join(directory, str(iteration), "gen.log"))
+    # master_vm.recv("~/spark-sql-perf/exe.log", os.path.join(directory, str(iteration), "exe.log"))
 
 
 def run(env):

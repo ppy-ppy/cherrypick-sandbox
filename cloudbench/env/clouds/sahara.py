@@ -246,7 +246,8 @@ class SaharaCloud(Cloud):
             ],
             "name": node_name,
             "image_id": image_id,
-            "flavor_id": flavor_id
+            "flavor_id": flavor_id,
+            "security_groups": [self.get_security_groups()]
         }
         response = requests.post("http://" + self.controllerip + ":8386/v1.1/" +
                                  self.get_projectid() + "/node-group-templates", json=payload, headers=header)
@@ -268,7 +269,8 @@ class SaharaCloud(Cloud):
             ],
             "name": node_name,
             "image_id": image_id,
-            "flavor_id": flavor_id
+            "flavor_id": flavor_id,
+            "security_groups": [self.get_security_groups()]
         }
         response = requests.post("http://" + self.controllerip + ":8386/v1.1/" +
                                 self.get_projectid() + "/node-group-templates", json=payload, headers=header)
