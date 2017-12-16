@@ -63,39 +63,77 @@ def run_spark(vms, env):
     # etc. etc.
 
     # Setup ssh keys
-    cluster = Cluster(vms, user='ubuntu')
-    cluster.setup_keys()
+    # cluster = Cluster(vms, user='ubuntu')
+    # cluster.setup_keys()
 
     # Setup disks
-    setup_disks(env, vms)
+    # setup_disks(env, vms)
+    #
+    # # Setup spark
+    master_vm = None
+    for vm in vms:
+        if vm.name == 'master':
+            master_vm = vm
+            break;
+    path = Config.path('tools', 'login.sh')
+    master_vm.send(path, '/home/ubuntu')
+    master_vm.script('sudo chmod 777 /home/ubuntu/login.sh')
+    master_vm.script('cd /home/ubuntu; ./login.sh')
+    path = Config.path('tools', 'json4s-jackson_2.11-3.2.10.jar')
+    master_vm.send(path, '/home/ubuntu')
+    path = Config.path('tools', 'spark-core_2.11-1.5.2.jar')
+    master_vm.send(path, '/home/ubuntu')
+    master_vm.script('sudo mv /home/ubuntu/json4s-jackson_2.11-3.2.10.jar /opt/spark/jars')
+    master_vm.script('sudo mv /home/ubuntu/spark-core_2.11-1.5.2.jar /opt/spark/jars')
+    master_vm.script('sudo mv /opt/sparks/jars/json4s-jackson_2.11-3.2.11.jar /home/ubuntu/')
+    setup_spark_kmeans(env, vms)
+    directory = 'spark-perf-kmeans-' + vm._config['type'] + '-' + str(len(vms)) + "-results"
+    makedirectory(directory)
+    iteration = str(1)
+    subdir = os.path.join(directory, str(iteration))
+    makedirectory(subdir)
+    master_vm.script('sudo mv /home/ubuntu/spark-perf-kmeans /home/hadoop/')
+    master_vm.script('sudo chown -R hadoop:hadoop /home/hadoop/spark-perf-kmeans')
+    master_vm.script('sudo touch /home/hadoop/spark-perf-kmeans/bin/results/time')
+    master_vm.script('sudo chmod 777 /home/hadoop/spark-perf-kmeans/bin/results/time')
+    master_vm.script('sudo su hadoop -l -c "cd /home/hadoop/spark-perf-kmeans/bin; ./run > /home/hadoop/spark-perf-kmeans/bin/output.log 2>&1"')
+    kmeans_time = master_vm.script('cd /home/hadoop/spark-perf-kmeans; tail -n1 /home/hadoop/spark-perf-kmeans/bin/results/time').strip()
+    kmeans_out = master_vm.script('cat /home/hadoop/spark-perf-kmeans/bin/output.log').strip()
+    file_name = master_vm.type
+    with open(os.path.join(directory, str(iteration), file_name + ".time"), 'w+') as f:
+        f.write("0," + str(kmeans_time))
 
-    # Setup spark
-    spark = setup_spark(env, vms)
+    with open(os.path.join(directory, str(iteration), file_name + ".out"), 'w+') as f:
+        f.write(kmeans_out)
+
+    master_vm.script('sudo mv /opt/sparks/jars/json4s-jackson_2.11-3.2.10.jar /home/ubuntu/')
+    master_vm.script('sudo mv /home/ubuntu/spark-perf-kmeans/json4s-jackson_2.11-3.2.11.jar /opt/spark/jars')
+    master_vm.script('sudo mv /opt/sparks/jars/spark-core_2.11-1.5.2.jar /home/ubuntu/')
+
 
     # Setup spark perf
-    setup_spark_kmeans(env, vms)
 
-    directory='spark-' + spark.master.type + '-' + str(len(vms)) + "-results"
-    makedirectory(directory)
-    iteration=str(1)
+    # directory='spark-' + spark.master.type + '-' + str(len(vms)) + "-results"
+    # makedirectory(directory)
+    # iteration=str(1)
 
 
     # Make sure spark can be written by anyone
-    parallel(lambda vm: vm.script('chown -R ubuntu:ubuntu /var/lib/spark/work'), vms)
-    parallel(lambda vm: vm.script('sudo -u hdfs hdfs dfs -chmod 777 /user/spark'), vms)
-
-    argos_start(vms)
-    spark.master.script('cd /home/ubuntu/spark-perf-kmeans; /usr/bin/time -f \'%e\' -o out.time ./bin/run >log.out 2>&1')
-    argos_finish(vms, directory, iteration)
-
-    spark_time = spark.master.script('cd /home/ubuntu/spark-perf-kmeans; tail -n1 out.time').strip()
-    spark_out = spark.master.script('cd /home/ubuntu/spark-perf-kmeans; cat log.out').strip()
-    file_name = spark.master.type
-    with open(os.path.join(directory, str(iteration), file_name + ".time"), 'w+') as f:
-        f.write("0," + str(spark_time))
-
-    with open(os.path.join(directory, str(iteration), file_name + ".out"), 'w+') as f:
-        f.write(spark_out)
+    # parallel(lambda vm: vm.script('chown -R ubuntu:ubuntu /var/lib/spark/work'), vms)
+    # parallel(lambda vm: vm.script('sudo -u hdfs hdfs dfs -chmod 777 /user/spark'), vms)
+    #
+    # argos_start(vms)
+    # spark.master.script('cd /home/ubuntu/spark-perf-kmeans; ./bin/run >log.out 2>&1')
+    # argos_finish(vms, directory, iteration)
+    #
+    # spark_time = spark.master.script('cd /home/ubuntu/spark-perf-kmeans; tail -n1 out.time').strip()
+    # spark_out = spark.master.script('cd /home/ubuntu/spark-perf-kmeans; cat log.out').strip()
+    # file_name = spark.master.type
+    # with open(os.path.join(directory, str(iteration), file_name + ".time"), 'w+') as f:
+    #     f.write("0," + str(spark_time))
+    #
+    # with open(os.path.join(directory, str(iteration), file_name + ".out"), 'w+') as f:
+    #     f.write(spark_out)
 
 def spark_driver_memory(vm):
     ram_mb = int(vm.memory() / (1024*1024))
@@ -129,7 +167,7 @@ def setup_spark_kmeans(env, vms):
         vm.script("cd spark-perf-kmeans; sed -i '/OptionSet(\"num-trials\", \[10\]),/c\    OptionSet(\"num-trials\", \[5\]),' config/config.py" )
         vm.script("cd spark-perf-kmeans; sed -i '/SPARK_DRIVER_MEMORY = \"5g\"/c\SPARK_DRIVER_MEMORY = \"%dm\"' config/config.py" % spark_driver_memory(vm))
         vm.script("cd spark-perf-kmeans; sed -i '/JavaOptionSet(\"spark.storage.memoryFraction\", \[0.66\]),/c\    JavaOptionSet(\"spark.storage.memoryFraction\", \[0.66\]), JavaOptionSet(\"spark.yarn.executor.memoryOverhead\", \[500\]),' config/config.py")
-        vm.script("cd spark-perf-kmeans; sed -i '/OptionSet(\"num-examples\", \[250000\], can_scale=False)/c\    OptionSet(\"num-examples\", \[%d\], can_scale=False),' config/config.py" % int(env.param('sparkml:examples')))
+        vm.script("cd spark-perf-kmeans; sed -i '/OptionSet(\"num-examples\", \[100\], can_scale=False)/c\    OptionSet(\"num-examples\", \[%d\], can_scale=False),' config/config.py" % int('100'))    #env.param('sparkml:examples')
     parallel(replace_line, vms)
 
 def setup_disks(env, vms):
