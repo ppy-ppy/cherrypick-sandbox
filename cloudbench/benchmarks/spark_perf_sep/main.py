@@ -65,34 +65,47 @@ def run_spark(vms, env):
     # etc. etc.
 
     # Setup ssh keys
-    cluster = Cluster(vms, user='ubuntu')
-    cluster.setup_keys()
+    # cluster = Cluster(vms, user='ubuntu')
+    # cluster.setup_keys()
 
     # Setup disks
-    setup_disks(env, vms)
+    # setup_disks(env, vms)
 
     # Setup spark
-    spark = setup_spark(env, vms)
+    # spark = setup_spark(env, vms)
 
+    master_vm = None
+    for vm in vms:
+        if vm.name == 'master':
+            master_vm = vm
+            break;
+
+    path = Config.path('tools', 'login.sh')
+    master_vm.send(path, '/home/ubuntu')
+    master_vm.script('sudo chmod 777 /home/ubuntu/login.sh')
+    master_vm.script('cd /home/ubuntu; ./login.sh')
     # Setup spark perf
     setup_spark_perf(env, vms)
 
-    directory='spark-' + spark.master.type + '-' + str(len(vms)) + "-results"
+    directory='spark-' + master_vm._config['type'] + '-' + str(len(vms)) + "-results"
     makedirectory(directory)
     iteration=str(1)
+    subdir = os.path.join(directory, str(iteration))
+    makedirectory(subdir)
 
-
+    master_vm.script('sudo chown -R hadoop:hadoop /home/ubuntu/spark-perf')
+    master_vm.script('sudo mv /home/ubuntu/spark-perf /home/hadoop')
     # Make sure spark can be written by anyone
-    parallel(lambda vm: vm.script('chown -R ubuntu:ubuntu /var/lib/spark/work'), vms)
-    parallel(lambda vm: vm.script('sudo -u hdfs hdfs dfs -chmod 777 /user/spark'), vms)
+    # parallel(lambda vm: vm.script('chown -R ubuntu:ubuntu /var/lib/spark/work'), vms)
+    # parallel(lambda vm: vm.script('sudo -u hdfs hdfs dfs -chmod 777 /user/spark'), vms)
 
-    argos_start(vms)
-    spark.master.script('cd /home/ubuntu/spark-perf; /usr/bin/time -f \'%e\' -o out.time ./bin/run >log.out 2>&1')
-    argos_finish(vms, directory, iteration)
+    # argos_start(vms)
+    master_vm.script('/usr/bin/time -f \'%e\' -o /home/ubuntu/out.time sudo su hadoop -l -c "/home/hadoop/spark-perf/bin/run >log.out 2>&1"')
+    # argos_finish(vms, directory, iteration)
 
-    spark_time = spark.master.script('cd /home/ubuntu/spark-perf; tail -n1 out.time').strip()
-    spark_out = spark.master.script('cd /home/ubuntu/spark-perf; cat log.out').strip()
-    file_name = spark.master.type
+    spark_time = master_vm.script('cd /home/ubuntu/spark-perf; tail -n1 /home/hadoop/time').strip()
+    spark_out = master_vm.script('cd /home/ubuntu/spark-perf; cat /home/hadoop/log.out').strip()
+    file_name = master_vm._config['type']
     with open(os.path.join(directory, str(iteration), file_name + ".time"), 'w+') as f:
         f.write("0," + str(spark_time))
 
@@ -127,11 +140,11 @@ def setup_spark_perf(env, vms):
     num_cores = len(vms) * vms[0].cpus()
 
     def replace_line(vm):
-        vm.script("cd spark-perf; sed -i '/OptionSet(\"num-partitions\", \[128\], can_scale=True),/c\    OptionSet(\"num-partitions\", [%d], can_scale=False),' config/config.py" % num_cores )
-        vm.script("cd spark-perf; sed -i '/OptionSet(\"num-trials\", \[10\]),/c\    OptionSet(\"num-trials\", \[5\]),' config/config.py" )
-        vm.script("cd spark-perf; sed -i '/SPARK_DRIVER_MEMORY = \"5g\"/c\SPARK_DRIVER_MEMORY = \"%dm\"' config/config.py" % spark_driver_memory(vm))
-        vm.script("cd spark-perf; sed -i '/JavaOptionSet(\"spark.storage.memoryFraction\", \[0.66\]),/c\    JavaOptionSet(\"spark.storage.memoryFraction\", \[0.66\]), JavaOptionSet(\"spark.yarn.executor.memoryOverhead\", \[500\]),' config/config.py")
-        vm.script("cd spark-perf; sed -i '/OptionSet(\"num-examples\", \[250000\], can_scale=False)/c\    OptionSet(\"num-examples\", \[%d\], can_scale=False)' config/config.py" % int(env.param('sparkml:examples')))
+        vm.script("cd /home/hadoop/spark-perf; sed -i '/OptionSet(\"num-partitions\", \[128\], can_scale=True),/c\    OptionSet(\"num-partitions\", [%d], can_scale=False),' config/config.py" % num_cores )
+        vm.script("cd /home/hadoop/spark-perf; sed -i '/OptionSet(\"num-trials\", \[10\]),/c\    OptionSet(\"num-trials\", \[5\]),' config/config.py" )
+        vm.script("cd /home/hadoop/spark-perf; sed -i '/SPARK_DRIVER_MEMORY = \"1g\"/c\SPARK_DRIVER_MEMORY = \"%dm\"' config/config.py" % spark_driver_memory(vm))
+        vm.script("cd /home/hadoop/spark-perf; sed -i '/JavaOptionSet(\"spark.storage.memoryFraction\", \[0.66\]),/c\    JavaOptionSet(\"spark.storage.memoryFraction\", \[0.66\]), JavaOptionSet(\"spark.yarn.executor.memoryOverhead\", \[500\]),' config/config.py")
+        vm.script("cd /home/hadoop/spark-perf; sed -i '/OptionSet(\"num-examples\", \[250\], can_scale=False)/c\    OptionSet(\"num-examples\", \[%d\], can_scale=False)' config/config.py" % int(env.param('sparkml:examples')))
     parallel(replace_line, vms)
 
 def setup_disks(env, vms):
