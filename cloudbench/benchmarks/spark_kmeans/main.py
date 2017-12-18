@@ -85,9 +85,9 @@ def run_spark(vms, env):
     master_vm.send(path, '/home/ubuntu')
     master_vm.script('sudo mv /home/ubuntu/json4s-jackson_2.11-3.2.10.jar /opt/spark/jars')
     master_vm.script('sudo mv /home/ubuntu/spark-core_2.11-1.5.2.jar /opt/spark/jars')
-    master_vm.script('sudo mv /opt/sparks/jars/json4s-jackson_2.11-3.2.11.jar /home/ubuntu/')
+    master_vm.script('sudo mv /opt/spark/jars/json4s-jackson_2.11-3.2.11.jar /home/ubuntu/')
     setup_spark_kmeans(env, vms)
-    directory = 'spark-perf-kmeans-' + vm._config['type'] + '-' + str(len(vms)) + "-results"
+    directory = 'kmeans-' + vm._config['type'] + '-' + str(len(vms)) + "-results"
     makedirectory(directory)
     iteration = str(1)
     subdir = os.path.join(directory, str(iteration))
@@ -105,10 +105,9 @@ def run_spark(vms, env):
 
     with open(os.path.join(directory, str(iteration), file_name + ".out"), 'w+') as f:
         f.write(kmeans_out)
-
-    master_vm.script('sudo mv /opt/sparks/jars/json4s-jackson_2.11-3.2.10.jar /home/ubuntu/')
+    master_vm.script('sudo mv /opt/spark/jars/json4s-jackson_2.11-3.2.10.jar /home/ubuntu/')
     master_vm.script('sudo mv /home/ubuntu/spark-perf-kmeans/json4s-jackson_2.11-3.2.11.jar /opt/spark/jars')
-    master_vm.script('sudo mv /opt/sparks/jars/spark-core_2.11-1.5.2.jar /home/ubuntu/')
+    master_vm.script('sudo mv /opt/spark/jars/spark-core_2.11-1.5.2.jar /home/ubuntu/')
 
 
     # Setup spark perf

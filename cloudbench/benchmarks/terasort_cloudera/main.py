@@ -125,15 +125,17 @@ def terasort(vms, env):
     master_vm.script('sudo su hadoop -l -c "hadoop fs -rm -r /terasort*"')
     master_vm.script('sudo su hadoop -l -c '
                      '"hadoop jar /opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar '
-                     'teragen {0} /terasort-input_lb_2"'
-                     .format('10000000'))
+                     'teragen -Dmapred.map.tasks={0} {1} /terasort-input_lb_2"'
+                     .format(mapper_count, '10000000'))
     reducer_count = int(sum(map(lambda vm: vm.cpus(), vms)) * 0.8)
     extra_terasort_params = "-Ddfs.blocksize=512M -Dmapreduce.task.io.sort.factor=100 " \
                             "-Dmapreduce.task.io.sort.mb=384 -Dio.file.buffer.size=131072"
     # monitor_start(vms)
     master_vm.script('/usr/bin/time -f \'%e\' -o terasort.out sudo su hadoop -l -c "hadoop jar '
                      '/opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar '
-                     'terasort /terasort-input_lb_2 /terasort-output_lb_2 > /tmp/output.log 2>&1"')
+                     'terasort -Dmapred.reduce.tasks={0} '
+                     '/terasort-input_lb_2 /terasort-output_lb_2 > /tmp/output.log 2>&1"'
+                     .format(reducer_count))
 
     monitor_finish(vms, directory, iteration)
     terasort_time = master_vm.script('tail -n1 terasort.out').strip()

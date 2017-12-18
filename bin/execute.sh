@@ -38,7 +38,7 @@ configExec() {
     TERASORT_SCALE=330
 
     # Spark Regression Parameters
-    SPARK_ML_EXAMPLES=250000
+    SPARK_ML_EXAMPLES=250
 
     # Spark KMeans Parameters
     # ...

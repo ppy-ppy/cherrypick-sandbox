@@ -78,8 +78,14 @@ def run_spark(vms, env):
     for vm in vms:
         if vm.name == 'master':
             master_vm = vm
-            break;
-
+            break
+    master_vm.script('sudo rm -rf /tmp')
+    master_vm.script('sudo rm -rf ~/spark-perf')
+    master_vm.script('sudo rm -rf ~/spark-perf.tar.gz')
+    master_vm.script('sudo rm -rf /home/hadoop/time')
+    master_vm.script('sudo su hadoop -l -c "rm -rf ~/spark-perf"')
+    master_vm.script('sudo su hadoop -l -c "rm -rf /home/hadoop/time"')
+    master_vm.script('sudo su hadoop -l -c "rm -rf /home/hadoop/log.out"')
     path = Config.path('tools', 'login.sh')
     master_vm.send(path, '/home/ubuntu')
     master_vm.script('sudo chmod 777 /home/ubuntu/login.sh')

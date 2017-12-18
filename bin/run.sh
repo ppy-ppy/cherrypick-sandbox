@@ -39,7 +39,7 @@ configExec() {
     TERASORT_SCALE=330
 
     # Spark Regression Parameters
-    SPARK_ML_EXAMPLES=250000
+    SPARK_ML_EXAMPLES=250
 
     # Spark KMeans Parameters
     # ...
@@ -90,8 +90,7 @@ configExec() {
 
     # If exp is Testdfsio
     if [ $exp = "testdfsio" ]; then
-        scale=$(echo "$TESTDFSIO_SCALE*10000000" | bc)
-        params="$params,testdfsio:rows=$scale"
+        echo -n
     fi
 
     paramsQ="--params=$params"

@@ -121,12 +121,22 @@ def testdfsio(vms, env):
     iteration = str(1)
     subdir = os.path.join(directory, str(iteration))
     makedirectory(subdir)
+    mapper_count = int(4 * int(sum(map(lambda vm: vm.cpus(), vms))) * 0.8)
+    reducer_count = int(sum(map(lambda vm: vm.cpus(), vms)) * 0.8)
+
     master_vm.script(
-        'sudo su hadoop -l -c "hadoop jar /opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.1-tests.jar TestDFSIO -write -nrFiles {0} -fileSize {1}MB"'.format(
-            '10', '100'))
+        'sudo su hadoop -l -c '
+        '"hadoop jar /opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.1-tests.jar '
+        'TestDFSIO -Dmapred.map.tasks={2} -Dmapred.map.tasks={3} -write -nrFiles {0} -fileSize {1}MB'
+        ' > /home/hadoop/write.log 2>&1"'
+        .format('10', '100', mapper_count, reducer_count))
+
     master_vm.script(
-        '/usr/bin/time -f \'%e\' -o testdfsio.out sudo su hadoop -l -c "hadoop jar /opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.1-tests.jar TestDFSIO -read -nrFiles {0} -fileSize {1} > /home/hadoop/output.log 2>&1"'.format(
-            '10', '100'))
+        '/usr/bin/time -f \'%e\' -o testdfsio.out sudo su hadoop -l -c '
+        '"hadoop jar /opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.1-tests.jar '
+        'TestDFSIO -Dmapred.map.tasks={2} -Dmapred.map.tasks={3} -read -nrFiles {0} -fileSize {1}'
+        ' > /home/hadoop/output.log 2>&1"'
+        .format('10', '100', mapper_count, reducer_count))
     testdfsio_time = master_vm.script('tail -n1 testdfsio.out').strip()
     testdfsio_out = master_vm.script('cat /home/hadoop/output.log').strip()
     file_name = master_vm.type
