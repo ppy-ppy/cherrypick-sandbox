@@ -115,6 +115,9 @@ def testdfsio(vms, env):
         if vm.name == 'master':
             master_vm = vm
             break;
+    master_vm.script('sudo rm -rf testdfsio.out')
+    master_vm.script('sudo rm -rf /home/hadoop/output.log')
+    parallel(lambda vm: vm.script("sync; echo 3 > /proc/sys/vm/drop_caches"), vms)
     # master_vm.install('argos')
     directory = 'testdfsio-' + vm._config['type'] + '-' + str(len(vms)) + "-results"
     makedirectory(directory)

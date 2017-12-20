@@ -79,7 +79,6 @@ def run_spark(vms, env):
         if vm.name == 'master':
             master_vm = vm
             break
-    master_vm.script('sudo rm -rf /tmp')
     master_vm.script('sudo rm -rf ~/spark-perf')
     master_vm.script('sudo rm -rf ~/spark-perf.tar.gz')
     master_vm.script('sudo rm -rf /home/hadoop/time')
@@ -110,6 +109,7 @@ def run_spark(vms, env):
     # argos_finish(vms, directory, iteration)
 
     spark_time = master_vm.script('cd /home/ubuntu/spark-perf; tail -n1 /home/hadoop/time').strip()
+    print spark_time
     spark_out = master_vm.script('cd /home/ubuntu/spark-perf; cat /home/hadoop/log.out').strip()
     file_name = master_vm._config['type']
     with open(os.path.join(directory, str(iteration), file_name + ".time"), 'w+') as f:
@@ -146,11 +146,16 @@ def setup_spark_perf(env, vms):
     num_cores = len(vms) * vms[0].cpus()
 
     def replace_line(vm):
-        vm.script("cd /home/hadoop/spark-perf; sed -i '/OptionSet(\"num-partitions\", \[128\], can_scale=True),/c\    OptionSet(\"num-partitions\", [%d], can_scale=False),' config/config.py" % num_cores )
-        vm.script("cd /home/hadoop/spark-perf; sed -i '/OptionSet(\"num-trials\", \[10\]),/c\    OptionSet(\"num-trials\", \[5\]),' config/config.py" )
-        vm.script("cd /home/hadoop/spark-perf; sed -i '/SPARK_DRIVER_MEMORY = \"1g\"/c\SPARK_DRIVER_MEMORY = \"%dm\"' config/config.py" % spark_driver_memory(vm))
-        vm.script("cd /home/hadoop/spark-perf; sed -i '/JavaOptionSet(\"spark.storage.memoryFraction\", \[0.66\]),/c\    JavaOptionSet(\"spark.storage.memoryFraction\", \[0.66\]), JavaOptionSet(\"spark.yarn.executor.memoryOverhead\", \[500\]),' config/config.py")
-        vm.script("cd /home/hadoop/spark-perf; sed -i '/OptionSet(\"num-examples\", \[250\], can_scale=False)/c\    OptionSet(\"num-examples\", \[%d\], can_scale=False)' config/config.py" % int(env.param('sparkml:examples')))
+        vm.script(
+            "cd spark-perf; sed -i '/OptionSet(\"num-partitions\", \[128\], can_scale=True),/c\    OptionSet(\"num-partitions\", [%d], can_scale=False),' config/config.py" % num_cores)
+        vm.script(
+            "cd spark-perf; sed -i '/OptionSet(\"num-trials\", \[10\]),/c\    OptionSet(\"num-trials\", \[5\]),' config/config.py")
+        vm.script(
+            "cd spark-perf; sed -i '/SPARK_DRIVER_MEMORY = \"5g\"/c\SPARK_DRIVER_MEMORY = \"%dm\"' config/config.py" % spark_driver_memory(vm))
+        vm.script(
+            "cd spark-perf; sed -i '/JavaOptionSet(\"spark.storage.memoryFraction\", \[0.66\]),/c\    JavaOptionSet(\"spark.storage.memoryFraction\", \[0.66\]), JavaOptionSet(\"spark.yarn.executor.memoryOverhead\", \[500\]),' config/config.py")
+        # vm.script(
+        #     "cd spark-perf; sed -i '/OptionSet(\"num-examples\", \[250000\], can_scale=False)/c\    OptionSet(\"num-examples\", \[%d\], can_scale=False)' config/config.py" % int('100000'))
     parallel(replace_line, vms)
 
 def setup_disks(env, vms):

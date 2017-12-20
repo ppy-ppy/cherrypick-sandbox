@@ -11,9 +11,9 @@ class Config():
     plugin_name = 'sandbox'
     hadoop_version = '2.7.1'
     floating_ip_pool_id = ''
-    master_nodegroup_template_name = 'd1-xlarge-master'
-    slave_nodegroup_template_name = 'd1-xlarge-slave'
-    cluster_template_name = 'd1-xlarge'
-    cluster_name = 'd1-xlarge'
-    master_node_count = 1
-    slave_node_count = 3
+    # master_nodegroup_template_name = 'm1-xlarge-master'
+    # slave_nodegroup_template_name = 'm1-xlarge-slave'
+    # cluster_template_name = 'm1-xlarge-4'
+    # cluster_name = 'lb-m1-xlarge-4'
+    # master_node_count = 1
+    # slave_node_count = 3

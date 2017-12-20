@@ -173,6 +173,10 @@ def tpcds(vms, env):
             master_vm = vm
         if vm.name == 'slave-0':
             slave_vm = vm
+    master_vm.script('sudo rm -rf /home/ubuntu/spark-sql-perf')
+    master_vm.script('sudo rm -rf /home/ubuntu/spark-sql-perf.tar.gz')
+    master_vm.script('sudo su hadoop -l -c "rm -rf /home/hadoop/spark-sql-perf"')
+    parallel(lambda vm: vm.script("sync; echo 3 > /proc/sys/vm/drop_caches"), vms)
     # spark.master.script("sudo service hadoop-hdfs-namenode restart")
     # spark.master.script("sudo service hadoop-yarn-resourcemanager restart")
     master_vm.script("sudo -u hdfs hdfs dfs -mkdir -p /user/spark")

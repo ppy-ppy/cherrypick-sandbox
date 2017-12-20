@@ -26,12 +26,14 @@ def prn_obj(obj):
 class SaharaCloud(Cloud):
 
     controllerip = Config.controllerip
+    node_count = None
 
     def __init__(self, *args, **kwargs):
         super(SaharaCloud, self).__init__(*args, **kwargs)
         constants.DEFAULT_VM_USERNAME = 'ubuntu'
         key_path = os.path.abspath('..') + '/cherrypick.pem'
         constants.DEFAULT_VM_PRIVATE_KEY = key_path
+        self.node_count = len(args[0]._benchmark._config._entities['virtual_machines'])
 
     def execute(self, command, obj={}):
         ret = super(SaharaCloud, self).execute(command, obj)
@@ -55,11 +57,24 @@ class SaharaCloud(Cloud):
 
     def address_virtual_machine(self, vm):
         """ Returns the address of a vm """
+        node_count = self.node_count
+        def get_master_nodegroup_template_name( vm ):
+            raw_str = vm._config['type'].split('.')
+            print raw_str[0] + '-' + raw_str[1] + '-master'
+            return raw_str[0] + '-' + raw_str[1] + '-master'
+        def get_slave_nodegroup_template_name( vm ):
+            raw_str = vm._config['type'].split('.')
+            print raw_str[0] + '-' + raw_str[1] + '-slave'
+            return raw_str[0] + '-' + raw_str[1] + '-slave'
+        def get_cluster_name( vm ):
+            raw_str = vm._config['type'].split('.')
+            print raw_str[0] + '-' + raw_str[1] + '-' + str(node_count)
+            return raw_str[0] + '-' + raw_str[1] + '-' + str(node_count)
         if( vm.name == 'master' ):
-            master_node_name = self.get_cluster_name() + '-' + self.get_master_nodegroup_template_name() + '-0'
+            master_node_name = get_cluster_name(vm) + '-' + get_master_nodegroup_template_name(vm) + '-0'
             return self.get_url_of_instance(master_node_name)
         else:
-            slave_node_base_name = self.get_cluster_name() + '-' + self.get_slave_nodegroup_template_name() + '-'
+            slave_node_base_name = get_cluster_name(vm) + '-' + get_slave_nodegroup_template_name(vm) + '-'
             str_list = vm.name.split('-')
             server_name = slave_node_base_name + str_list[1]
             return self.get_url_of_instance( server_name )
@@ -74,6 +89,21 @@ class SaharaCloud(Cloud):
 
     def create_security_group(self, ep):
         return True
+
+    def get_cluster_template_name(self):
+        return Config.cluster_template_name
+
+    def get_cluster_template_name(self):
+        return Config.cluster_template_name
+
+    def get_cluster_name(self):
+        return Config.cluster_name
+
+    def get_get_master_nodegroup_template_name(self):
+        return Config.master_nodegroup_template_name
+
+    def get_slave_nodegroup_template_name(self):
+        return Config.slave_nodegroup_template_name
 
     def get_master_nodegroup_template_name(self):
         return Config.master_nodegroup_template_name
@@ -98,16 +128,30 @@ class SaharaCloud(Cloud):
         return None
 
     def create_virtual_machine(self, vm):
+        node_count = self.node_count
+        def get_master_nodegroup_template_name( vm ):
+            raw_str = vm._config['type'].split('.')
+            return raw_str[0] + '-' + raw_str[1] + '-master'
+        def get_slave_nodegroup_template_name( vm ):
+            raw_str = vm._config['type'].split('.')
+            return raw_str[0] + '-' + raw_str[1] + '-slave'
+        def get_cluster_name( vm ):
+            raw_str = vm._config['type'].split('.')
+            return raw_str[0] + '-' + raw_str[1] + '-' + str(node_count)
+        def get_cluster_template_name( vm ):
+            raw_str = vm._config['type'].split('.')
+            print raw_str
+            return raw_str[0] + '-' + raw_str[1] + '-' + str(node_count)
         if( vm.name=="master" ):
             # Get all configs from Config
-            cluster_template_name = self.get_cluster_template_name()
-            cluster_name = self.get_cluster_name()
+            cluster_template_name = get_cluster_template_name(vm)
+            cluster_name = get_cluster_name(vm)
             image_id = self.get_image_id(vm._config['image'])
             flavor_id = self.get_flavor_id(vm._config['type'])
-            master_node_count = self.get_master_node_count()
-            slave_node_count = self.get_slave_node_count()
-            master_nodegroup_template_name = self.get_master_nodegroup_template_name()
-            slave_nodegroup_template_name = self.get_slave_nodegroup_template_name()
+            master_node_count = 1
+            slave_node_count = self.node_count - 1
+            master_nodegroup_template_name = get_master_nodegroup_template_name(vm)
+            slave_nodegroup_template_name = get_slave_nodegroup_template_name(vm)
             # Create master nodegroup template
             self.create_master_node(master_nodegroup_template_name, image_id, flavor_id)
             # Create slave nodegroup template
@@ -178,12 +222,6 @@ class SaharaCloud(Cloud):
 
     def get_floating_ip_pool(self):
         return Config.floating_ip_pool_id
-
-    def get_cluster_template_name(self):
-        return Config.cluster_template_name
-
-    def get_cluster_name(self):
-        return Config.cluster_name
 
     def get_master_node_count(self):
         return Config.master_node_count
