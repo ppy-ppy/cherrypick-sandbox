@@ -16,12 +16,20 @@ def vm_name(vm_type, vm_size):
     return ".".join([prefix, suffix])
 
 
+def is_valid_cluster_size(cluster_size):
+    if cluster_size == 2 or cluster_size == 4 or cluster_size == 8 or cluster_size == 16:
+        return True
+    return False
+
+
 def get_cost(spec):
     vm_type = spec['vm_type']
     vm_size = spec['vm_size']
     cluster_size = spec['machine_count']
     total_cost = 0.0
     print vm_type, vm_size, cluster_size
+    if not is_valid_cluster_size(int(cluster_size)):
+        raise Exception("Invalid Machine Count!")
 
     vm = vm_name(vm_type, vm_size)
 
@@ -63,14 +71,19 @@ def get_cost(spec):
                 runs = exp.find_runs(vm, int(cluster_size))
                 print runs[0]
 
+            if runs[0].time == -1:
+                runs[0].time = 0
+                runs[0].num = 0
+                raise Exception("Some errors when running!")
             runs[0].num = 0
+
             if TIME_LIMIT != -1 and runs[0].time > TIME_LIMIT:
                 raise Exception("Run Time Exceeds!")
             total_cost += runs[0].cost
 
     print "total cost: ", total_cost
     exp_type = Experiment.find(EXP_TYPE)
-    if exp_type > 0:
+    if exp_type.count > 0:
         exp_type.count -= 1
     return total_cost
 

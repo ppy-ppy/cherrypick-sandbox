@@ -214,8 +214,9 @@ def tpcds(vms, env):
     with open(os.path.join(directory, str(iteration), master_vm._config['type'] + '.time'), 'w+') as f:
         f.write('0,%s' % str(end - start))
 
+    file_name = master_vm.type
     master_vm.recv("/home/ubuntu/spark-sql-perf/gen.log", os.path.join(directory, str(iteration), "gen.log"))
-    master_vm.recv("/home/ubuntu/spark-sql-perf/exe.log", os.path.join(directory, str(iteration), "exe.log"))
+    master_vm.recv("/home/ubuntu/spark-sql-perf/exe.log", os.path.join(directory, str(iteration), file_name + ".out"))
 
 
 def run(env):
