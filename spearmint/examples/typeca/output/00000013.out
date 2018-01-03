@@ -1,0 +1,48 @@
+Running in wrapper mode for '13'
+
+Running python job.
+
+[u'c3'] [u'large'] [8]
+terasort
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeca/experiment.txt
+experiment:  <Experiment 1 name='terasort' count=0>
+runs:  [<Run 3 expID=1 configID=3 time=98.42 num=0>]
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=1>
+<Run 3 expID=1 configID=3 time=98.42 num=1>
+<Run 3 expID=1 configID=3 time=98.42 num=1>
+testdfsio
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeca/experiment.txt
+experiment:  <Experiment 2 name='testdfsio' count=0>
+runs:  [<Run 43 expID=2 configID=3 time=47.47 num=0>]
+<Run 43 expID=2 configID=3 time=47.47 num=1>
+<Run 43 expID=2 configID=3 time=47.47 num=1>
+<Run 43 expID=2 configID=3 time=47.47 num=1>
+kmeans
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeca/experiment.txt
+experiment:  <Experiment 4 name='kmeans' count=0>
+runs:  [<Run 123 expID=4 configID=3 time=296.51 num=1>]
+total cost:  2614.44881293
+Got result 7.868809
+
+Job file reloaded.
+Completed successfully in 120.21 seconds. [7.868809]
+setting job 13 complete
+set...

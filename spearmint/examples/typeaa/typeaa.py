@@ -3,6 +3,7 @@ import time
 import random
 from schema import *
 from experiment_config import *
+import math
 from run_job import run_job
 
 
@@ -79,7 +80,7 @@ def get_cost(spec):
 
             if TIME_LIMIT != -1 and runs[0].time > TIME_LIMIT:
                 raise Exception("Run Time Exceeds!")
-            total_cost += runs[0].cost
+            total_cost += math.log(runs[0].cost) * runs[0].time
 
     print "total cost: ", total_cost
     exp_type = Experiment.find(EXP_TYPE)

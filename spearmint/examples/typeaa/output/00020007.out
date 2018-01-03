@@ -1,0 +1,39 @@
+Running in wrapper mode for '20007'
+
+Running python job.
+
+[u'm1'] [u'medium'] [4]
+terasort
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeaa/experiment.txt
+experiment:  <Experiment 1 name='terasort' count=0>
+runs:  [<Run 18 expID=1 configID=18 time=63.79 num=1>]
+<Run 18 expID=1 configID=18 time=63.79 num=1>
+<Run 18 expID=1 configID=18 time=63.79 num=1>
+<Run 18 expID=1 configID=18 time=63.79 num=1>
+<Run 18 expID=1 configID=18 time=63.79 num=1>
+<Run 18 expID=1 configID=18 time=63.79 num=1>
+<Run 18 expID=1 configID=18 time=63.79 num=1>
+<Run 18 expID=1 configID=18 time=63.79 num=1>
+testdfsio
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeaa/experiment.txt
+experiment:  <Experiment 2 name='testdfsio' count=0>
+runs:  [<Run 58 expID=2 configID=18 time=27.93 num=1>]
+tpcds
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeaa/experiment.txt
+experiment:  <Experiment 5 name='tpcds' count=0>
+runs:  [<Run 178 expID=5 configID=18 time=66.85 num=1>]
+spark
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeaa/experiment.txt
+experiment:  <Experiment 3 name='spark' count=0>
+runs:  [<Run 98 expID=3 configID=18 time=322.64 num=1>]
+kmeans
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeaa/experiment.txt
+experiment:  <Experiment 4 name='kmeans' count=0>
+runs:  [<Run 138 expID=4 configID=18 time=503.52 num=1>]
+total cost:  2976.22150094
+Got result 7.998410
+
+Job file reloaded.
+Completed successfully in 35.55 seconds. [7.998410]
+setting job 20007 complete
+set...

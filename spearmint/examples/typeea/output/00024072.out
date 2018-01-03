@@ -1,0 +1,87 @@
+Running in wrapper mode for '24072'
+
+Running python job.
+
+[u'r2'] [u'small'] [16]
+testdfsio
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeea/experiment.txt
+experiment:  <Experiment 2 name='testdfsio' count=0>
+runs:  [<Run 76 expID=2 configID=36 time=43.32 num=1>]
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=0>
+<Run 76 expID=2 configID=36 time=43.32 num=1>
+<Run 76 expID=2 configID=36 time=43.32 num=1>
+<Run 76 expID=2 configID=36 time=43.32 num=1>
+<Run 76 expID=2 configID=36 time=43.32 num=1>
+<Run 76 expID=2 configID=36 time=43.32 num=1>
+<Run 76 expID=2 configID=36 time=43.32 num=1>
+<Run 76 expID=2 configID=36 time=43.32 num=1>
+<Run 76 expID=2 configID=36 time=43.32 num=1>
+tpcds
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeea/experiment.txt
+experiment:  <Experiment 5 name='tpcds' count=0>
+runs:  [<Run 196 expID=5 configID=36 time=307.22 num=1>]
+spark
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeea/experiment.txt
+experiment:  <Experiment 3 name='spark' count=0>
+runs:  [<Run 116 expID=3 configID=36 time=354.74 num=1>]
+total cost:  3108.0928279
+Got result 8.041765
+
+Job file reloaded.
+Completed successfully in 315.52 seconds. [8.041765]
+setting job 24072 complete
+set...

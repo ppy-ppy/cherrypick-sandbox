@@ -1,0 +1,9 @@
+Best result: 7.245956
+Job-id: 20032
+Parameters: 
+name: "vm_type"
+str_val: "r2"
+name: "vm_size"
+str_val: "small"
+name: "machine_count"
+int_val: 2

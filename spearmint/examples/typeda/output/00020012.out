@@ -1,0 +1,27 @@
+Running in wrapper mode for '20012'
+
+Running python job.
+
+[u'r2'] [u'small'] [2]
+testdfsio
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeda/experiment.txt
+experiment:  <Experiment 2 name='testdfsio' count=0>
+runs:  [<Run 73 expID=2 configID=33 time=73.77 num=0>]
+<Run 73 expID=2 configID=33 time=73.77 num=1>
+<Run 73 expID=2 configID=33 time=73.77 num=1>
+<Run 73 expID=2 configID=33 time=73.77 num=1>
+tpcds
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeda/experiment.txt
+experiment:  <Experiment 5 name='tpcds' count=0>
+runs:  [<Run 193 expID=5 configID=33 time=222.95 num=1>]
+spark
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeda/experiment.txt
+experiment:  <Experiment 3 name='spark' count=0>
+runs:  [<Run 113 expID=3 configID=33 time=715.03 num=1>]
+total cost:  1014.92215253
+Got result 6.922567
+
+Job file reloaded.
+Completed successfully in 15.09 seconds. [6.922567]
+setting job 20012 complete
+set...

@@ -1,0 +1,23 @@
+Running in wrapper mode for '24443'
+
+Running python job.
+
+[u'm1'] [u'small'] [5]
+----------------------------------------
+Problem running the job:
+(<type 'exceptions.Exception'>, Exception('Invalid Machine Count!',), <traceback object at 0x7fa95d3711b8>)
+Traceback (most recent call last):
+  File "/home/vode/pj/cherrypick-sandbox/spearmint/spearmint/runner.py", line 42, in job_runner
+    elif job.language == PYTHON: run_python_job(job)
+  File "/home/vode/pj/cherrypick-sandbox/spearmint/spearmint/runner.py", line 137, in run_python_job
+    result = module.main(job.id, params)
+  File "/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeba/typeba.py", line 93, in main
+    return COST_FUNC(get_cost(params))
+  File "/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeba/typeba.py", line 33, in get_cost
+    raise Exception("Invalid Machine Count!")
+Exception: Invalid Machine Count!
+None
+----------------------------------------
+Job file reloaded.
+Could not find value in output file.
+Job failed in 0.00 seconds.

@@ -65,7 +65,7 @@ export -f configExec
 
 parallelization=${1:-no-value}
 exp=${2:-"terasort"}
-iType=${3:-"d1.large"}
+iType=${3:-"m1.small"}
 iCount=${4:-"4"}
 
 printConfigs() {

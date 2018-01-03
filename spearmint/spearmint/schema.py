@@ -106,7 +106,7 @@ class Run(SQLObject):
 
     @property
     def cost(self):
-        return self.config.cost * self.time
+        return self.config.cost
 
 
 class BestConfiguration(SQLObject):

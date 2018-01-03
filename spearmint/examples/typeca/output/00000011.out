@@ -1,0 +1,58 @@
+Running in wrapper mode for '11'
+
+Running python job.
+
+[u'r2'] [u'large'] [2]
+terasort
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeca/experiment.txt
+experiment:  <Experiment 1 name='terasort' count=0>
+runs:  [<Run 25 expID=1 configID=25 time=79.16 num=0>]
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=0>
+<Run 25 expID=1 configID=25 time=79.16 num=1>
+<Run 25 expID=1 configID=25 time=79.16 num=1>
+<Run 25 expID=1 configID=25 time=79.16 num=1>
+testdfsio
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeca/experiment.txt
+experiment:  <Experiment 2 name='testdfsio' count=0>
+runs:  [<Run 65 expID=2 configID=25 time=29.64 num=0>]
+<Run 65 expID=2 configID=25 time=29.64 num=1>
+<Run 65 expID=2 configID=25 time=29.64 num=1>
+<Run 65 expID=2 configID=25 time=29.64 num=1>
+kmeans
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeca/experiment.txt
+experiment:  <Experiment 4 name='kmeans' count=0>
+runs:  [<Run 145 expID=4 configID=25 time=583.28 num=0>]
+<Run 145 expID=4 configID=25 time=583.28 num=1>
+total cost:  2057.48065542
+Got result 7.629238
+
+Job file reloaded.
+Completed successfully in 170.26 seconds. [7.629238]
+setting job 11 complete
+set...

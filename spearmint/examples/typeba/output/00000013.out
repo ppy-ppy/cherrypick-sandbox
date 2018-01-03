@@ -1,0 +1,81 @@
+Running in wrapper mode for '13'
+
+Running python job.
+
+[u'c3'] [u'large'] [8]
+terasort
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeba/experiment.txt
+experiment:  <Experiment 1 name='terasort' count=0>
+runs:  [<Run 3 expID=1 configID=3 time=98.42 num=0>]
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=0>
+<Run 3 expID=1 configID=3 time=98.42 num=1>
+testdfsio
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeba/experiment.txt
+experiment:  <Experiment 2 name='testdfsio' count=0>
+runs:  [<Run 43 expID=2 configID=3 time=47.47 num=0>]
+<Run 43 expID=2 configID=3 time=47.47 num=1>
+tpcds
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeba/experiment.txt
+experiment:  <Experiment 5 name='tpcds' count=0>
+runs:  [<Run 163 expID=5 configID=3 time=88.17 num=0>]
+<Run 163 expID=5 configID=3 time=88.17 num=1>
+total cost:  833.498446094
+Got result 6.725632
+
+Job file reloaded.
+Completed successfully in 285.35 seconds. [6.725632]
+setting job 13 complete
+set...

@@ -1,0 +1,31 @@
+Running in wrapper mode for '0'
+
+Running python job.
+
+params:  {u'machine_count': array([2]), u'cpu_count': [u'2'], u'vm_type': [u'm4']}
+/home/vode/pj/cherrypick-sandbox/bin
+m4 2
+local
+exp:  <Experiment 17 name='local'>
+runs []
+run
+0
+run time is : 957.59082873
+----------------------------------------
+Problem running the job:
+(<type 'exceptions.AttributeError'>, AttributeError("'int' object has no attribute 'cost'",), <traceback object at 0x7f55d00c65f0>)
+Traceback (most recent call last):
+  File "/home/vode/pj/cherrypick-sandbox/spearmint/spearmint/runner.py", line 42, in job_runner
+    elif job.language == PYTHON: run_python_job(job)
+  File "/home/vode/pj/cherrypick-sandbox/spearmint/spearmint/runner.py", line 137, in run_python_job
+    result = module.main(job.id, params)
+  File "/home/vode/pj/cherrypick-sandbox/spearmint/examples/cherrypick2/cherrypick2_offline.py", line 87, in main
+    return COST_FUNC(find_runs(params))
+  File "/home/vode/pj/cherrypick-sandbox/spearmint/examples/cherrypick2/cherrypick_config.py", line 4, in <lambda>
+    COST_FUNC = lambda run: math.log(run.cost * 100)
+AttributeError: 'int' object has no attribute 'cost'
+None
+----------------------------------------
+Job file reloaded.
+Could not find value in output file.
+Job failed in 3.86 seconds.

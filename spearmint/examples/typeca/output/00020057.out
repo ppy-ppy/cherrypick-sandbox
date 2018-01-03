@@ -1,0 +1,31 @@
+Running in wrapper mode for '20057'
+
+Running python job.
+
+[u'm1'] [u'xlarge'] [16]
+terasort
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeca/experiment.txt
+experiment:  <Experiment 1 name='terasort' count=0>
+runs:  [<Run 24 expID=1 configID=24 time=54.62 num=1>]
+<Run 24 expID=1 configID=24 time=54.62 num=0>
+<Run 24 expID=1 configID=24 time=54.62 num=0>
+<Run 24 expID=1 configID=24 time=54.62 num=0>
+<Run 24 expID=1 configID=24 time=54.62 num=1>
+<Run 24 expID=1 configID=24 time=54.62 num=1>
+testdfsio
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeca/experiment.txt
+experiment:  <Experiment 2 name='testdfsio' count=0>
+runs:  [<Run 64 expID=2 configID=24 time=39.02 num=1>]
+<Run 64 expID=2 configID=24 time=39.02 num=1>
+<Run 64 expID=2 configID=24 time=39.02 num=1>
+kmeans
+/home/vode/pj/cherrypick-sandbox/spearmint/examples/typeca/experiment.txt
+experiment:  <Experiment 4 name='kmeans' count=0>
+runs:  [<Run 144 expID=4 configID=24 time=294.76 num=1>]
+total cost:  2793.21678233
+Got result 7.934949
+
+Job file reloaded.
+Completed successfully in 35.11 seconds. [7.934949]
+setting job 20057 complete
+set...

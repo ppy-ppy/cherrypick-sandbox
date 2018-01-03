@@ -124,9 +124,9 @@ export -f configExec
 #}
 
 parallelization=${1:-no-value}
-exp=${2:-"terasort"}
-iType=${3:-"m1.medium"}
-iCount=${4:-"4"}
+exp=${2:-"tpcds"}
+iType=${3:-"r2.large"}
+iCount=${4:-"2"}
 
 printConfigs() {
     echo -n
