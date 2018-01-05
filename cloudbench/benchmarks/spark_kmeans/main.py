@@ -74,7 +74,7 @@ def run_spark(vms, env):
     for vm in vms:
         if vm.name == 'master':
             master_vm = vm
-            break;
+            break
     path = Config.path('tools', 'login.sh')
     master_vm.send(path, '/home/ubuntu')
     master_vm.script('sudo chmod 777 /home/ubuntu/login.sh')
@@ -106,7 +106,7 @@ def run_spark(vms, env):
     with open(os.path.join(directory, str(iteration), file_name + ".out"), 'w+') as f:
         f.write(kmeans_out)
     master_vm.script('sudo mv /opt/spark/jars/json4s-jackson_2.11-3.2.10.jar /home/ubuntu/')
-    master_vm.script('sudo mv /home/ubuntu/spark-perf-kmeans/json4s-jackson_2.11-3.2.11.jar /opt/spark/jars')
+    master_vm.script('sudo mv /home/ubuntu/json4s-jackson_2.11-3.2.11.jar /opt/spark/jars')
     master_vm.script('sudo mv /opt/spark/jars/spark-core_2.11-1.5.2.jar /home/ubuntu/')
 
 

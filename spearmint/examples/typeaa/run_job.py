@@ -9,7 +9,7 @@ def run_job(vm, cluster_size, exp_name):
         print cmd
         print os.system(cmd)
 
-    command = "./run.sh 0 " + exp_name + " " + vm + " " + str(cluster_size)
+    command = "./execute.sh 0 " + exp_name + " " + vm + " " + str(cluster_size)
     print command
     print os.system(command)
 
