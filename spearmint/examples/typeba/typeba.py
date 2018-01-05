@@ -14,6 +14,9 @@ def vm_name(vm_type, vm_size):
     prefix = vm_type
     suffix = vm_size
 
+    if suffix == "small" and prefix != "r2":
+        raise Exception("Invalid Machine Type!")
+
     return ".".join([prefix, suffix])
 
 
@@ -72,10 +75,6 @@ def get_cost(spec):
                 runs = exp.find_runs(vm, int(cluster_size))
                 print runs[0]
 
-            if runs[0].time == -1:
-                runs[0].time = 0
-                runs[0].num = 0
-                raise Exception("Some errors when running!")
             runs[0].num = 0
 
             if TIME_LIMIT != -1 and runs[0].time > TIME_LIMIT:

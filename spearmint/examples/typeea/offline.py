@@ -23,9 +23,11 @@ def find_and_update_run(vm, cluster_size, exp_name):
         runs[0].num = 1
     else:
         run_time = run_job(vm, cluster_size, exp_name)
-        runs[0].time = run_time
-        # runs[0].time = 1
-        runs[0].num = 1
+        if run_time != -1:
+            runs[0].time = run_time
+            # runs[0].time = 1
+            runs[0].num = 1
+
         runs = exp.find_runs(vm, int(cluster_size))
         print runs[0]
 

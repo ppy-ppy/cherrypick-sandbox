@@ -9,9 +9,10 @@ def find_and_update_run(vm, cluster_size, exp_name):
 
     runs = exp.find_runs(vm, int(cluster_size))
     run_time = run_job(vm, cluster_size, exp_name)
-    runs[0].time = runs[0].time * GAMMA + run_time
-    # runs[0].time = 1
-    runs[0].num = 1
+    if run_time != -1:
+        runs[0].time = runs[0].time * GAMMA + (1 - GAMMA) * run_time
+        runs[0].num = 1
+
     return runs[0]
 
 
