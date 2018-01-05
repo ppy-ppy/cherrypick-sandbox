@@ -91,16 +91,22 @@ ENV/
 # Rope project settings
 .ropeproject
 
-output/
-jobs/
-*.pkl
-*.pkl.lock
-best_job_and_result.txt
-trace.csv
+# output/
+# jobs/
+# *.pkl
+# *.pkl.lock
+# best_job_and_result.txt
+# trace.csv
 
 # Cherrpick temporary folders
 examples/cherrypick/graphs
 examples/cherrypick/results
+examples/
+!examples/typeaa
+!examples/typeba
+!examples/typeca
+!examples/typeda
+!examples/typeea
 bin/*tsv
 bin/*out
 bin/kmeans
