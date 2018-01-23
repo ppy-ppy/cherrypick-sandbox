@@ -89,6 +89,7 @@ def run_spark(vms, env):
     master_vm.send(path, '/home/ubuntu')
     master_vm.script('sudo chmod 777 /home/ubuntu/login.sh')
     master_vm.script('cd /home/ubuntu; ./login.sh')
+    parallel(lambda vm: vm.script("sync; echo 3 > /proc/sys/vm/drop_caches"), vms)
     # Setup spark perf
     setup_spark_perf(env, vms)
 

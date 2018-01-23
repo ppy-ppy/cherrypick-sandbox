@@ -226,6 +226,10 @@ class GPEIOptChooser:
         if self.D == -1:
             self._real_init(grid.shape[1], values[complete])
 
+        self.mean = np.mean(values[complete])
+        self.amp2 = np.std(values[complete]) + 1e-4
+        self.dump_hypers()
+
         # Grab out the relevant sets.
         comp = grid[complete,:]
         cand = grid[candidates,:]
