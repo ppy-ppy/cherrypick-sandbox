@@ -129,7 +129,7 @@ def terasort(vms, env):
     master_vm.script('sudo su hadoop -l -c '
                      '"hadoop jar /opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar '
                      'teragen -Dmapred.map.tasks={0} {1} /terasort-input_lb_2"'
-                     .format(mapper_count, '10000000'))
+                     .format(mapper_count, '30000000'))
     reducer_count = int(sum(map(lambda vm: vm.cpus(), vms)) * 0.8)
     extra_terasort_params = "-Ddfs.blocksize=512M -Dmapreduce.task.io.sort.factor=100 " \
                             "-Dmapreduce.task.io.sort.mb=384 -Dio.file.buffer.size=131072"

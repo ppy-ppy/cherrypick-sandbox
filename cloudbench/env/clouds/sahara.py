@@ -68,8 +68,10 @@ class SaharaCloud(Cloud):
             return raw_str[0] + '-' + raw_str[1] + '-slave'
         def get_cluster_name( vm ):
             raw_str = vm._config['type'].split('.')
-            print raw_str[0] + '-' + raw_str[1] + '-' + str(node_count)
-            return raw_str[0] + '-' + raw_str[1] + '-' + str(node_count)
+            #print raw_str[0] + '-' + raw_str[1] + '-' + str(node_count)
+            #return raw_str[0] + '-' + raw_str[1] + '-' + str(node_count)
+            print "zw-"+raw_str[0] + '-' + raw_str[1] + '-' + str(node_count)
+            return "zw-"+raw_str[0] + '-' + raw_str[1] + '-' + str(node_count)
         if( vm.name == 'master' ):
             master_node_name = get_cluster_name(vm) + '-' + get_master_nodegroup_template_name(vm) + '-0'
             return self.get_url_of_instance(master_node_name)
@@ -137,7 +139,8 @@ class SaharaCloud(Cloud):
             return raw_str[0] + '-' + raw_str[1] + '-slave'
         def get_cluster_name( vm ):
             raw_str = vm._config['type'].split('.')
-            return raw_str[0] + '-' + raw_str[1] + '-' + str(node_count)
+            #return raw_str[0] + '-' + raw_str[1] + '-' + str(node_count)
+            return "zw-"+raw_str[0] + '-' + raw_str[1] + '-' + str(node_count)
         def get_cluster_template_name( vm ):
             raw_str = vm._config['type'].split('.')
             print raw_str

@@ -1,5 +1,5 @@
-Best result: 6.922567
-Job-id: 20012
+Best result: 6.809019
+Job-id: 20336
 Parameters: 
 name: "vm_type"
 str_val: "r2"

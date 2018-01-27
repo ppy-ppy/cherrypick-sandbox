@@ -1,5 +1,5 @@
 from cloudbench.ssh import WaitUntilFinished, WaitForSeconds
-from util import Debug, parallel
+from cloudbench.util import Debug, parallel
 
 import datetime
 import re

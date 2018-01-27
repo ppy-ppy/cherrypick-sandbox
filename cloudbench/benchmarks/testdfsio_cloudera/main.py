@@ -132,14 +132,14 @@ def testdfsio(vms, env):
         '"hadoop jar /opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.1-tests.jar '
         'TestDFSIO -Dmapred.map.tasks={2} -Dmapred.map.tasks={3} -write -nrFiles {0} -fileSize {1}MB'
         ' > /home/hadoop/write.log 2>&1"'
-        .format('10', '100', mapper_count, reducer_count))
+        .format('20', '150', mapper_count, reducer_count))
 
     master_vm.script(
         '/usr/bin/time -f \'%e\' -o testdfsio.out sudo su hadoop -l -c '
         '"hadoop jar /opt/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.7.1-tests.jar '
         'TestDFSIO -Dmapred.map.tasks={2} -Dmapred.map.tasks={3} -read -nrFiles {0} -fileSize {1}'
         ' > /home/hadoop/output.log 2>&1"'
-        .format('10', '100', mapper_count, reducer_count))
+        .format('20', '150', mapper_count, reducer_count))
     testdfsio_time = master_vm.script('tail -n1 testdfsio.out').strip()
     testdfsio_out = master_vm.script('cat /home/hadoop/output.log').strip()
     file_name = master_vm.type

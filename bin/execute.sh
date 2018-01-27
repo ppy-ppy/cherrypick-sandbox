@@ -124,8 +124,8 @@ export -f configExec
 #}
 
 parallelization=${1:-no-value}
-exp=${2:-"tpcds"}
-iType=${3:-"r2.large"}
+exp=${2:-"spark"}
+iType=${3:-"r2.small"}
 iCount=${4:-"2"}
 
 printConfigs() {
