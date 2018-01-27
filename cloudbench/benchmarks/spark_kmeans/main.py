@@ -88,9 +88,15 @@ def run_spark(vms, env):
     master_vm.script('sudo mv /opt/spark/jars/json4s-jackson_2.11-3.2.11.jar /home/ubuntu/')
     parallel(lambda vm: vm.script("sync; echo 3 > /proc/sys/vm/drop_caches"), vms)
     setup_spark_kmeans(env, vms)
-    directory = 'kmeans-' + vm._config['type'] + '-' + str(len(vms)) + "-results"
+
+    dir_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    cloudbench_path = os.path.abspath(os.path.dirname(os.path.dirname(dir_path)))
+    result_path = os.path.join(cloudbench_path, "results")
+    result_name = 'kmeans-' + vm._config['type'] + '-' + str(len(vms)) + "-results"
+    directory = os.path.join(result_path, result_name)
     makedirectory(directory)
     iteration = str(1)
+
     subdir = os.path.join(directory, str(iteration))
     makedirectory(subdir)
     master_vm.script('sudo mv /home/ubuntu/spark-perf-kmeans /home/hadoop/')

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export filepath=$(cd "$(dirname "$0")"; pwd)
+echo $filepath
+
 configExec() {
     exp="$1"
     iType="$2"
@@ -8,12 +11,12 @@ configExec() {
 
     outputDir="$exp-$iType-$iCount-results"
     experiment="final-$exp-template"
-    root=".."
+    root=$(cd "$filepath/../"; pwd)
 
     ########################################
     # Generate the benchmark
     ########################################
-    local expName=$(./gen.sh -b $experiment -c $root -n $iCount)
+    local expName=$($filepath/gen.sh -b $experiment -c $root -n $iCount)
     expName=$(echo $expName | xargs)
 
     if [ -z $expName ]; then
@@ -115,13 +118,13 @@ configExec() {
     # Setup
     echo "> Setting up: $expSpec"
     printf "%s\0" $setupQ $noExecQ $paramsQ $expQ $cloudQ $verboseQ | \
-        xargs -0 bash -c './cb "$@"' --
+        xargs -0 bash -c '$filepath/cb "$@"' --
     sleep 1
 
     # Execute
     echo "> Executing: $expSpec"
     printf "%s\0" $paramsQ $expQ $cloudQ $verboseQ | \
-        xargs -0 bash -c './cb "$@"' --
+        xargs -0 bash -c '$filepath/cb "$@"' --
     sleep 1
 
     out="Exit Done"
@@ -131,7 +134,7 @@ configExec() {
     while [[ ! -z $out ]]; do
         out=$(
     printf "%s\0" $teardownQ $noExecQ $paramsQ $expQ $cloudQ $verboseQ | \
-        xargs -0 bash -c './cb "$@"' --
+        xargs -0 bash -c '$filepath/cb "$@"' --
         )
         sleep 1
     done
