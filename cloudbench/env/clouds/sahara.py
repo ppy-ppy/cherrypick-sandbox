@@ -31,7 +31,9 @@ class SaharaCloud(Cloud):
     def __init__(self, *args, **kwargs):
         super(SaharaCloud, self).__init__(*args, **kwargs)
         constants.DEFAULT_VM_USERNAME = 'ubuntu'
-        key_path = os.path.abspath('..') + '/cherrypick.pem'
+        dir_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+        key_dir = os.path.abspath(os.path.dirname(os.path.dirname(dir_path)))
+        key_path = key_dir + '/cherrypick.pem'
         constants.DEFAULT_VM_PRIVATE_KEY = key_path
         self.node_count = len(args[0]._benchmark._config._entities['virtual_machines'])
 

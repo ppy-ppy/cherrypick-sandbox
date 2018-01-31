@@ -7,7 +7,9 @@ import multiprocessing
 import traceback
 import sys
 
-BENCHMARK_PATH='../cloudbench/benchmarks/'
+current_path = os.path.abspath(os.path.dirname(__file__))
+BENCHMARK_PATH = os.path.join(current_path, "benchmarks")
+
 
 def run_with_timeout(func, args, timeout=5*60):
     proc = multiprocessing.Process(target=func, args=args)
@@ -88,7 +90,8 @@ def main():
             print directory
         return
 
-    if not os.path.exists(BENCHMARK_PATH + args.benchmark):
+    if not os.path.exists(os.path.join(BENCHMARK_PATH, args.benchmark)):
+        print os.path.join(BENCHMARK_PATH, args.benchmark)
         print "Couldn't find the benchmark."
         return
 
@@ -96,7 +99,7 @@ def main():
                      fromlist=['cloudbench.benchmarks.' + args.benchmark])
 
     env = Env(args.cloud,
-              BENCHMARK_PATH + args.benchmark + "/config.xml",
+              BENCHMARK_PATH + '/' + args.benchmark + "/config.xml",
               args.benchmark,
               args.storage,
               args.storage_name,

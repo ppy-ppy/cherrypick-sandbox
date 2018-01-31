@@ -33,8 +33,7 @@ def find_and_update_run(vm, cluster_size, exp_name):
 
     return runs[0]
 
-
-if __name__ == '__main__':
+def main():
     file_path = os.path.join(os.path.abspath("../spearmint/examples/typeaa/"), "experiment.txt")
     file_object = open(file_path, 'r')
     data = file_object.read()
@@ -42,5 +41,9 @@ if __name__ == '__main__':
     print vm
     print cluster_size
     print exp_name
-    print find_and_update_run(vm, cluster_size, exp_name)
+    temp=find_and_update_run(vm, cluster_size, exp_name)
+    print temp
+    return find_and_update_run(vm, cluster_size, exp_name)
 
+if __name__ == '__main__':
+    main()

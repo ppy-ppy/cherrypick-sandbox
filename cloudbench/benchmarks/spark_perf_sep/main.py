@@ -93,9 +93,14 @@ def run_spark(vms, env):
     # Setup spark perf
     setup_spark_perf(env, vms)
 
-    directory='spark-' + master_vm._config['type'] + '-' + str(len(vms)) + "-results"
+    dir_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    cloudbench_path = os.path.abspath(os.path.dirname(os.path.dirname(dir_path)))
+    result_path = os.path.join(cloudbench_path, "results")
+    result_name = 'spark-' + master_vm._config['type'] + '-' + str(len(vms)) + "-results"
+    directory = os.path.join(result_path, result_name)
     makedirectory(directory)
     iteration=str(1)
+
     subdir = os.path.join(directory, str(iteration))
     makedirectory(subdir)
 

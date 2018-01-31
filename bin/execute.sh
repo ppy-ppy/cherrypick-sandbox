@@ -1,18 +1,22 @@
 #!/bin/bash
 
+export filepath=$(cd "$(dirname "$0")"; pwd)
+echo $filepath
+
 configExec() {
     exp="$1"
     iType="$2"
     iCount="$3"
+    dType="$4"
 
     outputDir="$exp-$iType-$iCount-results"
     experiment="final-$exp-template"
-    root=".."
+    root=$(cd "$filepath/../"; pwd)
 
     ########################################
     # Generate the benchmark
     ########################################
-    local expName=$(./gen.sh -b $experiment -c $root -n $iCount)
+    local expName=$($filepath/gen.sh -b $experiment -c $root -n $iCount)
     expName=$(echo $expName | xargs)
 
     if [ -z $expName ]; then
@@ -86,8 +90,7 @@ configExec() {
 
     # If exp is Testdfsio
     if [ $exp = "testdfsio" ]; then
-        scale=$(echo "$TESTDFSIO_SCALE*10000000" | bc)
-        params="$params,testdfsio:rows=$scale"
+        echo -n
     fi
 
     paramsQ="--params=$params"
@@ -112,21 +115,22 @@ configExec() {
     # Execute
     echo "> Executing: $expSpec"
     printf "%s\0" $paramsQ $expQ $cloudQ $verboseQ | \
-        xargs -0 bash -c './cb "$@"' --
+        xargs -0 bash -c '$filepath/cb "$@"' --
     sleep 1
 
 }
 
 export -f configExec
 
+
 #configFor() {
 #    printf "%s\0%s\0%s\0%s\0" $exp $iType $iCount $dType
 #}
 
 parallelization=${1:-no-value}
-exp=${2:-"spark"}
-iType=${3:-"r2.small"}
-iCount=${4:-"2"}
+exp=${2:-"terasort"}
+iType=${3:-"m1.small"}
+iCount=${4:-"4"}
 
 printConfigs() {
     echo -n

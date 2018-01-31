@@ -119,9 +119,15 @@ def testdfsio(vms, env):
     master_vm.script('sudo rm -rf /home/hadoop/output.log')
     parallel(lambda vm: vm.script("sync; echo 3 > /proc/sys/vm/drop_caches"), vms)
     # master_vm.install('argos')
-    directory = 'testdfsio-' + vm._config['type'] + '-' + str(len(vms)) + "-results"
+
+    dir_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    cloudbench_path = os.path.abspath(os.path.dirname(os.path.dirname(dir_path)))
+    result_path = os.path.join(cloudbench_path, "results")
+    result_name = 'testdfsio-' + vm._config['type'] + '-' + str(len(vms)) + "-results"
+    directory = os.path.join(result_path, result_name)
     makedirectory(directory)
     iteration = str(1)
+
     subdir = os.path.join(directory, str(iteration))
     makedirectory(subdir)
     mapper_count = int(4 * int(sum(map(lambda vm: vm.cpus(), vms))) * 0.8)

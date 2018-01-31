@@ -439,5 +439,29 @@ class SoftMax_Classifier:
         #print(result)
         return (io_weight,cpu_weight),result.argmax(axis=1)[0]
 
-softmax=SoftMax_Classifier()
-print(softmax.test([1, 3, 1, 1, 0]))
+
+def softmax_classifier(input_data):
+    io_weight = input_data[0] * terasort_IO_Measure_Weight + input_data[1] * testdfsio_IO_Measure_Weight + input_data[
+                                                                                                               2] * tpcds_IO_Measure_Weight + \
+                input_data[3] * spark_IO_Measure_Weight + input_data[4] * kmeans_IO_Measure_Weight  # IO
+    cpu_weight = input_data[0] * terasort_CPU_Measure_Weight + input_data[1] * testdfsio_CPU_Measure_Weight + \
+                 input_data[2] * tpcds_CPU_Measure_Weight + input_data[3] * spark_CPU_Measure_Weight + input_data[
+                                                                                                           4] * kmeans_CPU_Measure_Weight  # CPU
+    total_weight = io_weight + cpu_weight
+    io_weight = io_weight / total_weight
+    cpu_weight = cpu_weight / total_weight
+
+    hidden_output = np.maximum(0, np.dot(input_data, w_input_hidden) + b_input_hidden)
+    result = np.dot(hidden_output, w_hidden_output) + b_hidden_output  # data_num*class_num
+
+    result = np.exp(result)
+    result = result / np.sum(result, axis=1, keepdims=True)  # data_num*class_num
+    # print(result)
+    return (io_weight, cpu_weight), result.argmax(axis=1)[0]
+
+if __name__ == '__main__':
+
+    print(softmax_classifier([1, 3, 1, 1, 0]))
+
+
+
