@@ -107,6 +107,7 @@ examples/
 !examples/typeca
 !examples/typeda
 !examples/typeea
+!examples/template
 bin/*tsv
 bin/*out
 bin/kmeans
