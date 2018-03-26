@@ -7,7 +7,6 @@ configExec() {
     exp="$1"
     iType="$2"
     iCount="$3"
-    dType="$4"
 
     outputDir="$exp-$iType-$iCount-results"
     experiment="final-$exp-template"
@@ -74,7 +73,7 @@ iCount=${4:-"2"}
 
 printConfigs() {
     echo -n
-    printf "%s\0%s\0%s\0%s\0" $exp $iType $iCount
+    printf "%s\0%s\0%s\0" $iType $iCount $exp
 }
 
 usage() {

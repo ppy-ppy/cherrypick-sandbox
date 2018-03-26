@@ -306,9 +306,7 @@ def attempt_dispatch(expt_config, expt_dir, chooser, driver, options):
         return True
 
     else:
-        print expt.name
         exp = Exp.find(expt.name)
-        print exp.count
         if exp.count != 0:
             return False
         # start a bunch of candidate jobs if possible
