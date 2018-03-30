@@ -29,7 +29,6 @@ def run_job(vm, cluster_size, exp_name):
     success = 0
     for s in fp.readlines():
         success += len(re.findall(keyword, s))
-
     fp.close()
     print success
     if success == 0:
