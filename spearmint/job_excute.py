@@ -8,6 +8,9 @@ from schema import Experiment as Exp
 import subprocess
 # from spearmint.main import *
 import signal
+from path_config import *
+from sqlobject import *
+
 
 
 # job_id_to_weight_dict = {"abc": [1, 3, 1, 1, 0]}
@@ -165,11 +168,28 @@ def check_or_create_cluster(vm, cluster_size):
     print os.system(command)
 
 
+###############################################################################################################
+# Phase 3:
+###############################################################################################################
+
+
+def find_and_update_run(vm, cluster_size, exp_name, time):
+    exp = Exp.find(exp_name)
+    runs = exp.find_runs(vm, int(cluster_size))
+    if time != -1:
+        runs[0].time = runs[0].time * GAMMA + (1 - GAMMA) * time
+        runs[0].num = 1
+    print vm
+    print runs
+    return runs[0]
+
+# find_and_update_run("c3.xlarge", 2, "terasort", 50)
+
+
 if __name__ == '__main__':
     exp_name, vm, cluster_size = select_configuration("user1", "job", "2", True)
+    # find_and_update_run("c3.xlarge", 2, "terasort", 50)
     print exp_name, vm, cluster_size
     # check_or_create_cluster(vm, cluster_size)
     # print "cluster"
-
-
 
