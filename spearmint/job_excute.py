@@ -8,8 +8,6 @@ from schema import Experiment as Exp
 import subprocess
 # from spearmint.main import *
 import signal
-from path_config import *
-from sqlobject import *
 
 
 
