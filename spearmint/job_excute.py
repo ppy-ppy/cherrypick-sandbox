@@ -4,12 +4,14 @@ from path_config import *
 import os
 import multiprocessing
 import time
-from schema import Experiment as Exp
+from spearmint.schema import Experiment as Exp
 import subprocess
 # from spearmint.main import *
 import signal
 from path_config import *
 from sqlobject import *
+import requests
+from cloudbench.env.clouds.config import Config
 
 
 
@@ -158,8 +160,86 @@ def select_configuration(user_id, job_id, data_size, is_to_optimize):
 
 ###############################################################################################################
 # Phase 2: Check if the cluster under selected configuration exists. If not, create it.
-###############################################################################################################
+##############################################################################################################
 
+def get_controllerip():
+    return Config.controllerip
+
+def get_project_id():
+    return Config.project_id
+
+def get_user_id():
+    return Config.user_id
+
+def get_keystone_authtoken():
+    controllerip = get_controllerip()
+    payload = {
+        "auth": {
+            "identity": {
+                "methods": [
+                    "password"
+                ],
+                "password": {
+                    "user": {
+                        "id": get_user_id(),
+                        "password": "admin"
+                    }
+                }
+            },
+            "scope": {
+                "project": {
+                    "id": get_project_id()
+                }
+            }
+        }
+    }
+    response = requests.post("http://" + controllerip + ":5000/v3/auth/tokens", json=payload)
+    return response.headers["X-Subject-Token"]
+
+def get_cluster_name(self):
+    clusters_name_list = []
+    token = self.get_keystone_authtoken()
+    header = {
+        "X-Auth-Token": token
+    }
+    response = requests.get("http://" + Config.controllerip +
+                            ":8386/v1.1/" + self.get_project_id() + "/clusters", headers=header)
+    clusters = response.json()["clusters"]
+
+    for i in range(len(clusters)):
+        clusters_name_list.append(clusters[i]["name"])
+    return clusters_name_list
+
+def get_search_name():
+    return Config.search_name
+
+def get_master_ip(count):
+    token = get_keystone_authtoken()
+    header = {
+        "X-Auth-Token": token
+    }
+    response = requests.get("http://" + Config.controllerip +
+                            ":8386/v1.1/" + get_project_id()+ "/clusters", headers=header)
+    clusters = response.json()["clusters"]
+    node_groups = clusters[count]["node_groups"]
+    instances = node_groups[0]["instances"]
+    master_ip = instances[0]["management_ip"]
+    print master_ip
+    return master_ip
+
+
+def cluster_exist(str):
+    cluster_name_list = get_cluster_name()
+    count = 0
+    for i in range(len(cluster_name_list)):
+        if str == cluster_name_list[i]:
+            break
+        else:
+            count = count + 1
+    if count == len(cluster_name_list):
+        return False
+    else:
+        get_master_ip(count)
 
 def check_or_create_cluster(vm, cluster_size):
     # TODO: check if the cluster exists
@@ -192,4 +272,3 @@ if __name__ == '__main__':
     print exp_name, vm, cluster_size
     # check_or_create_cluster(vm, cluster_size)
     # print "cluster"
-
