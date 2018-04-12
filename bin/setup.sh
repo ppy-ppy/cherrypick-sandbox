@@ -73,7 +73,7 @@ iCount=${4:-"4"}
 
 printConfigs() {
     echo -n
-    printf "%s\0%s\0%s\0" $iType $iCount $exp
+    printf "%s\0%s\0%s\0" $exp $iType $iCount
 }
 
 usage() {
