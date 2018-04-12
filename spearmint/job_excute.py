@@ -165,11 +165,14 @@ def select_configuration(user_id, job_id, data_size, is_to_optimize):
 def get_controllerip():
     return Config.controllerip
 
+
 def get_project_id():
     return Config.project_id
 
+
 def get_user_id():
     return Config.user_id
+
 
 def get_keystone_authtoken():
     controllerip = get_controllerip()
@@ -196,6 +199,7 @@ def get_keystone_authtoken():
     response = requests.post("http://" + controllerip + ":5000/v3/auth/tokens", json=payload)
     return response.headers["X-Subject-Token"]
 
+
 def get_cluster_name():
     clusters_name_list = []
     token = get_keystone_authtoken()
@@ -210,8 +214,6 @@ def get_cluster_name():
         clusters_name_list.append(clusters[i]["name"])
     return clusters_name_list
 
-def get_search_name():
-    return Config.search_name
 
 def get_master_ip(count):
     token = get_keystone_authtoken()
@@ -219,7 +221,7 @@ def get_master_ip(count):
         "X-Auth-Token": token
     }
     response = requests.get("http://" + Config.controllerip +
-                            ":8386/v1.1/" + get_project_id()+ "/clusters", headers=header)
+                            ":8386/v1.1/" + get_project_id() + "/clusters", headers=header)
     clusters = response.json()["clusters"]
     node_groups = clusters[count]["node_groups"]
     instances = node_groups[0]["instances"]
@@ -228,11 +230,11 @@ def get_master_ip(count):
     return master_ip
 
 
-def cluster_exist(str):
+def cluster_exist(cluster_name):
     cluster_name_list = get_cluster_name()
     count = 0
     for i in range(len(cluster_name_list)):
-        if str == cluster_name_list[i]:
+        if cluster_name == cluster_name_list[i]:
             break
         else:
             count = count + 1
@@ -240,6 +242,7 @@ def cluster_exist(str):
         return False
     else:
         get_master_ip(count)
+
 
 def check_or_create_cluster(vm, cluster_size):
     # TODO: check if the cluster exists
