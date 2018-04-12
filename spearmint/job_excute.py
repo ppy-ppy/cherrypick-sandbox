@@ -241,14 +241,21 @@ def cluster_exist(cluster_name):
     if count == len(cluster_name_list):
         return False
     else:
-        get_master_ip(count)
+        return get_master_ip(count)
 
 
 def check_or_create_cluster(vm, cluster_size):
-    # TODO: check if the cluster exists
-
-    command = EXE_PATH + "/setup.sh 0 terasort " + vm + " " + str(cluster_size)
-    print os.system(command)
+    prefix, suffix = vm.split('.')
+    # cluster_name = "qh-" + prefix + "-" + suffix + "-" + cluster_size
+    cluster_name = prefix + "-" + suffix + "-" + cluster_size
+    print cluster_name
+    ip_address = cluster_exist(cluster_name)
+    if not ip_address:
+        command = EXE_PATH + "/setup.sh 0 terasort " + vm + " " + str(cluster_size)
+        print os.system(command)
+        return False
+    else:
+        return ip_address
 
 
 ###############################################################################################################
@@ -270,8 +277,13 @@ def find_and_update_run(vm, cluster_size, exp_name, time):
 
 
 if __name__ == '__main__':
-    exp_name, vm, cluster_size = select_configuration("user1", "job", "2", True)
+    # exp_name, vm, cluster_size = select_configuration("user1", "job", "2", True)
     # find_and_update_run("c3.xlarge", 2, "terasort", 50)
-    print exp_name, vm, cluster_size
+    # print exp_name, vm, cluster_size
     # check_or_create_cluster(vm, cluster_size)
     # print "cluster"
+    master_ip = check_or_create_cluster("c3.large", "8")
+    if not master_ip:
+        print "The cluster is starting..."
+    else:
+        print "Master IP: ", master_ip
