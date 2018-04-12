@@ -196,14 +196,14 @@ def get_keystone_authtoken():
     response = requests.post("http://" + controllerip + ":5000/v3/auth/tokens", json=payload)
     return response.headers["X-Subject-Token"]
 
-def get_cluster_name(self):
+def get_cluster_name():
     clusters_name_list = []
-    token = self.get_keystone_authtoken()
+    token = get_keystone_authtoken()
     header = {
         "X-Auth-Token": token
     }
     response = requests.get("http://" + Config.controllerip +
-                            ":8386/v1.1/" + self.get_project_id() + "/clusters", headers=header)
+                            ":8386/v1.1/" + get_project_id() + "/clusters", headers=header)
     clusters = response.json()["clusters"]
 
     for i in range(len(clusters)):
