@@ -147,7 +147,16 @@ def get_best_config(exp_name, is_to_optimize):
 
 
 def select_configuration(user_id, job_id, data_size, is_to_optimize):
-    exp_name = user_id + "-" + job_id + "-" + data_size
+
+    # Three data_size level groups currently: <1G, 1G~3G, >3G
+    if int(data_size) <= 1:
+        data_group = "1"
+    elif 1 < int(data_size) <= 3:
+        data_group = "2"
+    else:
+        data_group = "3"
+
+    exp_name = user_id + "-" + job_id + "-" + data_group
     exp_path = os.path.join(EXP_PATH, exp_name)
     if not os.path.exists(exp_path):
         create_experiment(exp_name, exp_path)
@@ -259,7 +268,7 @@ def check_or_create_cluster(vm, cluster_size):
 
 
 ###############################################################################################################
-# Phase 3:
+# Phase 3: Continue with BO process after taking in the actual running time.
 ###############################################################################################################
 
 
