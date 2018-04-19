@@ -101,12 +101,7 @@ ENV/
 # Cherrpick temporary folders
 examples/cherrypick/graphs
 examples/cherrypick/results
-examples/
-!examples/typeaa
-!examples/typeba
-!examples/typeca
-!examples/typeda
-!examples/typeea
+examples/*
 !examples/template
 bin/*tsv
 bin/*out
