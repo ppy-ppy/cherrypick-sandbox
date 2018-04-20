@@ -1,7 +1,7 @@
 from schema import *
 from experiment_config import *
 from run_job import run_job
-from env_config import *
+from spearmint.env_config import *
 import time
 
 

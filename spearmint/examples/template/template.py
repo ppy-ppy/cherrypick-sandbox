@@ -1,26 +1,26 @@
 from schema import *
 from experiment_config import *
 import math
-from env_config import *
 import time
 
 
-
-def vm_name(vm_type, vm_size):
+def get_vm_name(vm_type, vm_size):
     vm_type = vm_type[0]
     vm_size = vm_size[0]
 
     prefix = vm_type
     suffix = vm_size
 
-    if suffix == "small" and prefix != "r2":
+    vm_name = ".".join([prefix, suffix])
+
+    if vm_name not in flavor_space:
         raise Exception("Invalid Machine Type!")
 
-    return ".".join([prefix, suffix])
+    return vm_name
 
 
 def is_valid_cluster_size(cluster_size):
-    if cluster_size == 2 or cluster_size == 4 or cluster_size == 8 or cluster_size == 16:
+    if cluster_size in machine_space:
         return True
     return False
 
@@ -34,7 +34,7 @@ def get_cost(spec):
     if not is_valid_cluster_size(int(cluster_size)):
         raise Exception("Invalid Machine Count!")
 
-    vm = vm_name(vm_type, vm_size)
+    vm = get_vm_name(vm_type, vm_size)
 
     vm_0 = VirtualMachineType.selectBy(name=vm).getOne()
 

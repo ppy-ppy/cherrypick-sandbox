@@ -1,5 +1,5 @@
 import re
-from env_config import *
+from spearmint.env_config import *
 
 
 def run_job(vm, cluster_size, exp_name):

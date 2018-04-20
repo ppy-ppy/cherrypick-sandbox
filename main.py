@@ -1,5 +1,5 @@
 from spearmint.runtest import *
-from env_config import *
+from spearmint.env_config import *
 import os
 import multiprocessing
 
@@ -77,15 +77,13 @@ def get_best_config(exp_name, is_to_optimize=True):
     return vm, int(cluster_size)
 
 
-def select_configuration(user_id, job_id, data_size, is_to_optimize):
+def select_configuration(user_id, job_id, data_size, is_to_optimize=True):
 
-    # Three data_size level groups currently: <1G, 1G~3G, >3G
-    if int(data_size) <= 1:
-        data_group = "1"
-    elif 1 < int(data_size) <= 3:
-        data_group = "2"
-    else:
-        data_group = "3"
+    data_group = "0"
+    for split in data_split:
+        if float(data_size) - split < 0:
+            break
+        data_group = str(split)
 
     exp_name = user_id + "-" + job_id + "-" + data_group
     exp_path = os.path.join(EXP_PATH, exp_name)
@@ -219,9 +217,10 @@ def find_and_update_run(vm, cluster_size, exp_name, time):
 
 
 if __name__ == '__main__':
-    # exp_name, vm, cluster_size = select_configuration("user1", "job", "2", True)
-    # find_and_update_run("c3.xlarge", 2, "terasort", 50)
-    # print exp_name, vm, cluster_size
+    exp_name, vm, cluster_size = select_configuration("user1", "job", "3", True)
+    print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
+    print exp_name, vm, cluster_size
+
     # check_or_create_cluster(vm, cluster_size)
     # print "cluster"
     # master_ip = check_or_create_cluster("c3.large", "8")
@@ -230,4 +229,4 @@ if __name__ == '__main__':
     # else:
     #     print "Master IP: ", master_ip
 
-    find_and_update_run("c3.xlarge", "2", "terasort", "50")
+    # find_and_update_run("c3.xlarge", "2", "terasort", "50")
