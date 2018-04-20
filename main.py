@@ -6,6 +6,7 @@ import multiprocessing
 from spearmint.spearmint.schema import Experiment as Exp
 import requests
 from cloudbench.env.clouds.config import Config
+from ernest.outputdata import *
 
 ###############################################################################################################
 # Phase 1: Create the experiment (if new), start BO, and return the next sample/current best configuration.
@@ -205,12 +206,14 @@ def check_or_create_cluster(vm, cluster_size):
 def find_and_update_run(vm, cluster_size, exp_name, time):
     exp = Exp.find(exp_name)
     runs = exp.find_runs(vm, int(cluster_size))
-    if time != -1:
-        runs[0].time = runs[0].time * GAMMA + (1 - GAMMA) * time
+    if float(time) != -1:
+        runs[0].time = runs[0].time * GAMMA + (1 - GAMMA) * float(time)
         runs[0].num = 1
-    print vm
-    print runs
+        # print vm
+    # print runs
+    output_test_time_ernest(vm, int(cluster_size), exp_name, float(time))
     return runs[0]
+
 
 # find_and_update_run("c3.xlarge", 2, "terasort", 50)
 
@@ -221,8 +224,10 @@ if __name__ == '__main__':
     # print exp_name, vm, cluster_size
     # check_or_create_cluster(vm, cluster_size)
     # print "cluster"
-    master_ip = check_or_create_cluster("c3.large", "8")
-    if not master_ip:
-        print "The cluster is starting..."
-    else:
-        print "Master IP: ", master_ip
+    # master_ip = check_or_create_cluster("c3.large", "8")
+    # if not master_ip:
+    #     print "The cluster is starting..."
+    # else:
+    #     print "Master IP: ", master_ip
+
+    find_and_update_run("c3.xlarge", "2", "terasort", "50")

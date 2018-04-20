@@ -67,10 +67,24 @@ class Predictor(object):
     scale = training_point[1]
     return [1.0, float(scale) / float(mc), float(mc), np.log(mc)]
 
+
+  def get_test_data(self):
+    test_data_list = []
+    csv_reader = csv.reader(open('rcv1-parsed.csv'))
+    for row in csv_reader:
+      test_data_list.append(row)
+    print test_data_list
+
+
+  # def get_predicted_data(self):
+
+
 if __name__ == "__main__":
   if len(sys.argv) != 2:
     print "Usage <predictor.py> <csv_file_train>"
     sys.exit(0)
+
+  predictor_data = []
 
   pred = Predictor(data_file=sys.argv[1])
 
@@ -79,7 +93,11 @@ if __name__ == "__main__":
   test_data = [[i, 1.0] for i in xrange(4, 64, 4)]
 
   predicted_times = pred.predict_all(test_data)
-  print
-  print "Machines, Predicted Time"
+  # print
+  # print "Machines, Predicted Time"
   for i in xrange(0, len(test_data)):
-    print test_data[i][0], predicted_times[i]
+     # print test_data[i][0], predicted_times[i]
+    predictor_data.append([test_data[i][0]])
+    predictor_data[i].append(predicted_times[i])
+  # print predictor_data
+
