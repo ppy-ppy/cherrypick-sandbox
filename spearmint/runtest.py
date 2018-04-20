@@ -2,7 +2,7 @@
 
 
 import shutil
-from path_config import *
+from env_config import *
 import re
 
 

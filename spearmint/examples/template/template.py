@@ -1,9 +1,9 @@
 from schema import *
 from experiment_config import *
 import math
-from path_config_1 import *
+from env_config import *
 import time
-import random
+
 
 
 def vm_name(vm_type, vm_size):

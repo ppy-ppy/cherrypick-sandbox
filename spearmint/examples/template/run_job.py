@@ -1,5 +1,5 @@
 import re
-from path_config_1 import *
+from env_config import *
 
 
 def run_job(vm, cluster_size, exp_name):
