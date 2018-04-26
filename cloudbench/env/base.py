@@ -1,7 +1,7 @@
 from cloudbench.env.config.xml_config import EnvXmlConfig
 from cloudbench.env.clouds import AzureCloud, AwsCloud, GcloudCloud, LocalCloud, OpenstackCloud, SaharaCloud
 from cloudbench.executor import Executor
-from cloudbench.storage import AzureStorage, FileStorage, JsonStorage
+from cloudbench.storage import FileStorage, JsonStorage
 from cloudbench.util import parallel
 
 from threading import RLock
@@ -151,9 +151,9 @@ class Env(object):
             self._storage = JsonStorage(self)
             return self._storage
 
-        if isinstance(self._storage, str):
-            if self._storage == 'azure':
-                self._storage = AzureStorage(self)
+        # if isinstance(self._storage, str):
+        #     if self._storage == 'azure':
+        #         self._storage = AzureStorage(self)
 
         return self._storage
 
