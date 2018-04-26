@@ -2,29 +2,34 @@ language: PYTHON
 name: "template"
 
 variable {
-    name: "vm_type"
-    type: ENUM
+    name: "vcpus"
+    type: INT
     size: 1
-    options: "m1"
-    options: "r2"
-    options: "c3"
+    min: 1
+    max: 16
 }
 
 variable {
-    name: "vm_size"
-    type: ENUM
+    name: "ram"
+    type: INT
     size: 1
-    options: "small"
-    options: "medium"
-    options: "large"
-    options: "xlarge"
+    min: 1
+    max: 32
+}
+
+variable {
+    name: "disk"
+    type: INT
+    size: 1
+    min: 1
+    max: 160
 }
 
 variable {
     name: "machine_count"
     type: INT
     size: 1
-    min: 2
-    max: 16
+    min: 4
+    max: 20
 }
 

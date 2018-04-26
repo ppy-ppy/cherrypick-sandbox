@@ -42,6 +42,37 @@ def start_bo(exp_name):
         print p.name
 
 
+def get_flavor_details():
+    token = get_keystone_authtoken()
+    header = {
+        "X-Auth-Token": token
+    }
+    response = requests.get("http://" + Config.controllerip + ":8774/v2/flavors/detail", headers=header)
+    flavors = response.json()['flavors']
+    return flavors
+
+
+def get_vm_name(vcpus, ram, disk):
+    flavors = get_flavor_details()
+    print flavors
+    min_distance = -1
+    vm_name = ''
+    for flavor in flavors:
+        if flavor['vcpus'] < vcpus or flavor['ram'] / 1024 < ram or flavor['disk'] < disk:
+            continue
+        else:
+            distance = math.sqrt((flavor['vcpus'] - vcpus)**2 +
+                                 (flavor['ram'] / 1024 - ram)**2 +
+                                 (flavor['disk'] - disk)**2)
+            if min_distance == -1 or distance < min_distance:
+                min_distance = distance
+                vm_name = flavor['name']
+    if vm_name == '':
+        raise Exception("No valid flavor!")
+
+    return vm_name
+
+
 def get_best_config(exp_name, is_to_optimize=True):
     if is_to_optimize:
         file_name = "experiment.txt"
@@ -57,27 +88,28 @@ def get_best_config(exp_name, is_to_optimize=True):
     data = file_object.read()
 
     if is_to_optimize:
-        vm, cluster_size, exp = data.split(' ')
+        vm, vcpus, ram, disk, cluster_size, exp = data.split(' ')
     else:
         data = data.split("Parameters: \n")
         lines = data[1].split("\n")
         data = ""
         for line in lines:
             line = line.replace("name: ", '')
-            line = line.replace("str_val: ", '')
             line = line.replace("int_val: ", '')
             line = line.replace('"', '')
             line = line.replace("\n", "")
-            line = line.replace("vm_type", "")
-            line = line.replace("vm_size", ".")
+            line = line.replace("vcpus", "")
+            line = line.replace("ram", ", ")
+            line = line.replace("disk", ", ")
             line = line.replace("machine_count", ", ")
             data += line
 
-        vm, cluster_size = data.split(", ")
-    return vm, int(cluster_size)
+        vcpus, ram, disk, cluster_size = data.split(", ")
+        vm = get_vm_name(int(vcpus), int(ram), int(disk))
+    return vm, int(vcpus), int(ram), int(disk), int(cluster_size)
 
 
-def select_configuration(user_id, job_id, data_size, is_to_optimize=True):
+def select_configuration(user_id, job_id, data_size, timestamp, is_to_optimize=True):
 
     data_group = "0"
     for split in data_split:
@@ -85,15 +117,15 @@ def select_configuration(user_id, job_id, data_size, is_to_optimize=True):
             break
         data_group = str(split)
 
-    exp_name = user_id + "-" + job_id + "-" + data_group
+    exp_name = user_id + "-" + job_id + "-" + data_group + "-" + timestamp
     exp_path = os.path.join(EXP_PATH, exp_name)
     if not os.path.exists(exp_path):
         create_experiment(exp_name, exp_path)
     start_bo(exp_name)
-    vm, cluster_size = get_best_config(exp_name, is_to_optimize)
-    exp = Exp.find(exp_name)
+    vm, vcpus, ram, disk, cluster_size = get_best_config(exp_name, is_to_optimize)
+    # exp = Exp.find(exp_name)
 
-    return exp_name, vm, cluster_size
+    return exp_name, vm, vcpus, ram, disk, cluster_size
 
 
 ###############################################################################################################
@@ -217,9 +249,9 @@ def find_and_update_run(vm, cluster_size, exp_name, time):
 
 
 if __name__ == '__main__':
-    exp_name, vm, cluster_size = select_configuration("user1", "job", "3", True)
+    exp_name, vm, vcpus, ram, disk, cluster_size = select_configuration("user3", "job", "1", "20180426", True)
     print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
-    print exp_name, vm, cluster_size
+    print exp_name, vm, vcpus, ram, disk, cluster_size
 
     # check_or_create_cluster(vm, cluster_size)
     # print "cluster"

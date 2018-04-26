@@ -11,17 +11,24 @@ EXPERIMENT = ['terasort', 'testdfsio', 'tpcds', 'spark', 'kmeans']
 COST_FUNC = lambda cost: math.log(cost)
 TIME_LIMIT = -1
 
-flavor_space = [
-    "m1.medium",
-    "m1.large",
-    "m1.xlarge",
-    "r2.small",
-    "r2.medium",
-    "r2.large",
-    "r2.xlarge",
-    "c3.medium",
-    "c3.large",
-    "c3.xlarge"
-]
+controller_ip = '10.141.105.23'
+project_id = 'fbf563d4c77b47cbbf826684da3d706e'
+user_id = 'fb9fc79dcebd4eb3be07c3f36d168874'
+password = 'admin'
 
-machine_space = [2, 4, 8, 16]
+
+#
+# flavor_space = [
+#     "m1.medium",
+#     "m1.large",
+#     "m1.xlarge",
+#     "r2.small",
+#     "r2.medium",
+#     "r2.large",
+#     "r2.xlarge",
+#     "c3.medium",
+#     "c3.large",
+#     "c3.xlarge"
+# ]
+#
+# machine_space = [2, 4, 8, 16]

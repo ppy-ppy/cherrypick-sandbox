@@ -20,8 +20,9 @@ if __name__ == '__main__':
     file_path = os.path.join(EXP_PATH, EXP_TYPE, "experiment.txt")
     file_object = open(file_path, 'r')
     data = file_object.read()
-    vm, cluster_size, exp_name = data.split(' ')
+    vm, vcpus, ram, disk, cluster_size, exp_name = data.split(' ')
     print vm
+    print vcpus, ram, disk
     print cluster_size
     print exp_name
     print find_and_update_run(vm, cluster_size, exp_name)

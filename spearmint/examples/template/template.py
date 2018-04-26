@@ -2,39 +2,98 @@ from schema import *
 from experiment_config import *
 import math
 import time
+import requests
+# from spearmint.env_config import *
 
 
-def get_vm_name(vm_type, vm_size):
-    vm_type = vm_type[0]
-    vm_size = vm_size[0]
+# def get_vm_name(vm_type, vm_size):
+#     vm_type = vm_type[0]
+#     vm_size = vm_size[0]
+#
+#     prefix = vm_type
+#     suffix = vm_size
+#
+#     vm_name = ".".join([prefix, suffix])
+#
+#     if vm_name not in flavor_space:
+#         raise Exception("Invalid Machine Type!")
+#
+#     return vm_name
+#
+#
+# def is_valid_cluster_size(cluster_size):
+#     if cluster_size in machine_space:
+#         return True
+#     return False
 
-    prefix = vm_type
-    suffix = vm_size
 
-    vm_name = ".".join([prefix, suffix])
+def get_keystone_authtoken():
+    payload = {
+        "auth": {
+            "identity": {
+                "methods": [
+                    "password"
+                ],
+                "password": {
+                    "user": {
+                        "id": user_id,
+                        "password": "admin"
+                    }
+                }
+            },
+            "scope": {
+                "project": {
+                    "id": project_id
+                }
+            }
+        }
+    }
+    response = requests.post("http://" + controller_ip + ":5000/v3/auth/tokens", json=payload)
+    return response.headers["X-Subject-Token"]
 
-    if vm_name not in flavor_space:
-        raise Exception("Invalid Machine Type!")
+
+def get_flavor_details():
+    token = get_keystone_authtoken()
+    header = {
+        "X-Auth-Token": token
+    }
+    response = requests.get("http://" + controller_ip + ":8774/v2/flavors/detail", headers=header)
+    flavors = response.json()['flavors']
+    return flavors
+
+
+def get_vm_name(vcpus, ram, disk):
+    flavors = get_flavor_details()
+    print flavors
+    min_distance = -1
+    vm_name = ''
+    for flavor in flavors:
+        if flavor['vcpus'] < vcpus or flavor['ram'] / 1024 < ram or flavor['disk'] < disk:
+            continue
+        else:
+            distance = math.sqrt((flavor['vcpus'] - vcpus)**2 +
+                                 (flavor['ram'] / 1024 - ram)**2 +
+                                 (flavor['disk'] - disk)**2)
+            if min_distance == -1 or distance < min_distance:
+                min_distance = distance
+                vm_name = flavor['name']
+    if vm_name == '':
+        raise Exception("No valid flavor!")
 
     return vm_name
 
 
-def is_valid_cluster_size(cluster_size):
-    if cluster_size in machine_space:
-        return True
-    return False
-
-
 def get_cost(spec):
-    vm_type = spec['vm_type']
-    vm_size = spec['vm_size']
+    vcpus = spec['vcpus']
+    ram = spec['ram']
+    disk = spec['disk']
     cluster_size = spec['machine_count']
     total_cost = 0.0
-    print vm_type, vm_size, cluster_size
-    if not is_valid_cluster_size(int(cluster_size)):
-        raise Exception("Invalid Machine Count!")
+    print vcpus, ram, disk, cluster_size
+    # if not is_valid_cluster_size(int(cluster_size)):
+    #     raise Exception("Invalid Machine Count!")
 
-    vm = get_vm_name(vm_type, vm_size)
+    vm = get_vm_name(vcpus, ram, disk)
 
     vm_0 = VirtualMachineType.selectBy(name=vm).getOne()
 
@@ -84,7 +143,9 @@ def get_cost(spec):
     # single experiment as a whole
     exp = Experiment.find(EXP_TYPE)
 
-    data = vm + " " + str(cluster_size[0]) + " " + EXP_TYPE
+    data = vm + " " + \
+           str(vcpus[0]) + " " + str(ram[0]) + " " + str(disk[0]) + " " + str(cluster_size[0]) + " " +\
+           EXP_TYPE
     file_path = os.path.join(EXP_PATH, EXP_TYPE, "experiment.txt")
     print file_path
     file_object = open(file_path, 'w')
@@ -121,3 +182,8 @@ def get_cost(spec):
 
 def main(job_id, params):
     return COST_FUNC(get_cost(params))
+
+#
+# if __name__ == '__main__':
+#     vm_name = get_vm_name(15, 15, 20)
+#     print vm_name
