@@ -1,4 +1,4 @@
-from spearmint.spearmint.schema import *
+from spearmint.schema import *
 import csv
 import os
 import math

@@ -1,12 +1,15 @@
-from spearmint.runtest import *
-from spearmint.env_config import *
-import os
 import multiprocessing
+import sys
 
-from spearmint.spearmint.schema import Experiment as Exp
 import requests
+
 from cloudbench.env.clouds.config import Config
+from env_config import *
 from ernest.outputdata import *
+from spearmint.schema import Experiment as Exp
+from runtest import *
+
+print sys.path
 
 ###############################################################################################################
 # Phase 1: Create the experiment (if new), start BO, and return the next sample/current best configuration.
@@ -249,7 +252,7 @@ def find_and_update_run(vm, cluster_size, exp_name, time):
 
 
 if __name__ == '__main__':
-    exp_name, vm, vcpus, ram, disk, cluster_size = select_configuration("user3", "job", "1", "20180426", True)
+    exp_name, vm, vcpus, ram, disk, cluster_size = select_configuration("user4", "job", "1", "20180428", True)
     print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
     print exp_name, vm, vcpus, ram, disk, cluster_size
 

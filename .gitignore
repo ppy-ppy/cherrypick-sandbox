@@ -8,6 +8,22 @@ config/gcloud_ssh_key
 config/cloud.key
 config/cloud.pem
 config/cloud.pub
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
 
 # Cloud storage files for benchmarks
 azure.json
@@ -45,24 +61,6 @@ cloudbench/benchmarks/ts2-*
 
 # C extensions
 *.so
-
-# Distribution / packaging
-.Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
-*.egg
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -129,3 +127,23 @@ ENV/
 # Rope project settings
 .ropeproject
 .idea
+
+output/
+jobs/
+*.pkl
+*.pkl.lock
+best_job_and_result.txt
+trace.csv
+
+# Cherrpick temporary folders
+examples/*
+!examples/template
+bin/*tsv
+bin/*out
+bin/kmeans
+bin/spark
+bin/tpcds
+bin/terasort
+bin/tpch
+results/*
+!results/results.md
