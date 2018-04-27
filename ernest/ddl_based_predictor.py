@@ -2,7 +2,7 @@ from predictor import Predictor
 import csv
 import math
 import os
-from spearmint.spearmint.schema import *
+from spearmint.schema import *
 from sqlobject import *
 #
 #
@@ -17,10 +17,14 @@ from sqlobject import *
 deadline = 100000
 price = 5
 
+FILE_PATH = os.path.abspath(os.path.dirname(__file__))
+OUTPUT_PATH = os.path.join(FILE_PATH, "lowest.csv")
+INPUT_PATH = os.path.join(FILE_PATH, "rcv1-parsed.csv")
+
 
 def establish_csv():
-    csvfile = open('test.csv', 'w')
-    writer = csv.writer(csvfile)
+    csv_file = open(OUTPUT_PATH, 'w')
+    writer = csv.writer(csv_file)
     writer.writerow(['Machines', 'Time', 'Cost'])
     return None
 
@@ -29,7 +33,7 @@ def get_predictor_time():
 
     predicted_data=[]
 
-    pred = Predictor(data_file='rcv1-parsed.csv')
+    pred = Predictor(data_file=INPUT_PATH)
 
     model = pred.fit()
 
@@ -72,21 +76,21 @@ def get_lowest_cost():
         cost.append(math.log(price)*in_time_data[i][1])
         # cost.append(in_time_data[i][0]*in_time_data[i][1]*price)
 
-    lowest_cost=min(cost)
+    lowest_cost = min(cost)
     a = cost.index(lowest_cost)
     lowest_cost_configuration.append(in_time_data[a][0])
     lowest_cost_configuration.append(in_time_data[a][1])
     lowest_cost_configuration.append(lowest_cost)
 
-    if not os.path.exists("test.csv"):
+    if not os.path.exists(OUTPUT_PATH):
         establish_csv()
-        with open('test.csv', 'a') as csvfile:
-            writer = csv.writer(csvfile)
+        with open(OUTPUT_PATH, 'a') as csv_file:
+            writer = csv.writer(csv_file)
             writer.writerow(lowest_cost_configuration)
 
     else:
-        with open('test.csv', 'a') as csvfile:
-            writer = csv.writer(csvfile)
+        with open(OUTPUT_PATH, 'a') as csv_file:
+            writer = csv.writer(csv_file)
             writer.writerow(lowest_cost_configuration)
     # with open('test.csv', 'w', newline='') as csvfile:
     #     writer = csv.writer(csvfile)

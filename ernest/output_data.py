@@ -3,10 +3,13 @@ import csv
 import os
 import math
 
+FILE_PATH = os.path.abspath(os.path.dirname(__file__))
+OUTPUT_PATH = os.path.join(FILE_PATH, "output.csv")
+
 
 def establish_csv():
-    csvfile = open('test.csv', 'w')
-    writer = csv.writer(csvfile)
+    csv_file = open(OUTPUT_PATH, 'w')
+    writer = csv.writer(csv_file)
     writer.writerow(['# Experiment', 'VirtualMachine', 'MachinesNumber', 'Time', 'Cost'])
     return None
 
@@ -18,29 +21,21 @@ def output_test_time_ernest(vm, cluster_size, exp_name, time):
     # cost = VirtualMachineType.selectBy(id=vm_type.vmID).getOne().cost
     total_cost = math.log(runs[0].cost)*time
     total_cost = str(total_cost)
-    outputdata = []
-    outputdata.append(exp_name)
-    outputdata.append(vm)
-    outputdata.append(cluster_size)
-    outputdata.append(time)
-    outputdata.append(total_cost)
+    output_data = [exp_name, vm, cluster_size, time, total_cost]
 
-    if not os.path.exists("test.csv"):
+    if not os.path.exists(OUTPUT_PATH):
         establish_csv()
-        with open('test.csv', 'a') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(outputdata)
+        with open(OUTPUT_PATH, 'a') as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerow(output_data)
 
     else:
-        with open('test.csv', 'a') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(outputdata)
+        with open(OUTPUT_PATH, 'a') as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerow(output_data)
 
     print vm_type.count
     # print cost
     print time
     print total_cost
-    print outputdata
-
-
-# output_test_time_ernest("c3.xlarge", 2, "terasort", 50)
+    print output_data

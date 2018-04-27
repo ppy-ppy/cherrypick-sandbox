@@ -147,3 +147,6 @@ bin/terasort
 bin/tpch
 results/*
 !results/results.md
+ernest/lowest\.csv
+
+ernest/output\.csv

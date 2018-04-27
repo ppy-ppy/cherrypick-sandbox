@@ -5,9 +5,10 @@ import requests
 
 from cloudbench.env.clouds.config import Config
 from env_config import *
-from ernest.outputdata import *
+from ernest.output_data import *
 from spearmint.schema import Experiment as Exp
 from runtest import *
+from spearmint import main as bo
 
 print sys.path
 
@@ -38,11 +39,12 @@ def start_bo(exp_name):
     print type(process_list)
     print process_list
     if command_ not in process_list:
-        p = multiprocessing.Process(name="BO_process", target=os.system, args=(command_,))
-        print "Starting BO..."
-        p.start()
-        print p.pid
-        print p.name
+        # p = multiprocessing.Process(name="BO_process", target=os.system, args=(command_,))
+        # print "Starting BO..."
+        # p.start()
+        # print p.pid
+        # print p.name
+        bo.main(config_path)
 
 
 def get_flavor_details():
@@ -126,7 +128,6 @@ def select_configuration(user_id, job_id, data_size, timestamp, is_to_optimize=T
         create_experiment(exp_name, exp_path)
     start_bo(exp_name)
     vm, vcpus, ram, disk, cluster_size = get_best_config(exp_name, is_to_optimize)
-    # exp = Exp.find(exp_name)
 
     return exp_name, vm, vcpus, ram, disk, cluster_size
 
@@ -219,7 +220,6 @@ def cluster_exist(cluster_name):
 
 def check_or_create_cluster(vm, cluster_size):
     prefix, suffix = vm.split('.')
-    # cluster_name = "qh-" + prefix + "-" + suffix + "-" + cluster_size
     cluster_name = prefix + "-" + suffix + "-" + cluster_size
     print cluster_name
     ip_address = cluster_exist(cluster_name)
@@ -248,13 +248,10 @@ def find_and_update_run(vm, cluster_size, exp_name, time):
     return runs[0]
 
 
-# find_and_update_run("c3.xlarge", 2, "terasort", 50)
-
-
 if __name__ == '__main__':
-    exp_name, vm, vcpus, ram, disk, cluster_size = select_configuration("user4", "job", "1", "20180428", True)
-    print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
-    print exp_name, vm, vcpus, ram, disk, cluster_size
+    # exp_name, vm, vcpus, ram, disk, cluster_size = select_configuration("user9", "job", "1", "20180428", True)
+    # print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
+    # print exp_name, vm, vcpus, ram, disk, cluster_size
 
     # check_or_create_cluster(vm, cluster_size)
     # print "cluster"
@@ -264,4 +261,4 @@ if __name__ == '__main__':
     # else:
     #     print "Master IP: ", master_ip
 
-    # find_and_update_run("c3.xlarge", "2", "terasort", "50")
+    find_and_update_run("c3.xlarge", "2", "terasort", "50")

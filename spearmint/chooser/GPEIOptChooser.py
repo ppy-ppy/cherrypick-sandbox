@@ -32,10 +32,10 @@ import scipy.stats    as sps
 import scipy.optimize as spo
 import cPickle
 import multiprocessing
-import config
+from spearmint import config
 
-from helpers import *
-from Locker  import *
+from spearmint.helpers import *
+from spearmint.Locker  import *
 
 def optimize_pt(c, b, comp, pend, vals, model):
     ret = spo.fmin_l_bfgs_b(model.grad_optimize_ei_over_hypers,

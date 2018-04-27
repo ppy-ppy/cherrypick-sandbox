@@ -30,18 +30,19 @@ import sys
 import config
 from schema import Experiment as Exp
 
-try: import simplejson as json
-except ImportError: import json
-
+try:
+    import simplejson as json
+except ImportError:
+    import json
 
 # TODO: this shouldn't be necessary when the project is installed like a normal
 # python lib.  For now though, this lets you symlink to supermint from your path and run it
 # from anywhere.
 sys.path.append(os.path.realpath(__file__))
 
-from ExperimentGrid  import *
-from helpers         import *
-from runner          import job_runner, job_params
+from ExperimentGrid import *
+from helpers import *
+from runner import job_runner, job_params
 
 # Use a global for the web process so we can kill it cleanly on exit
 web_proc = None
@@ -49,6 +50,7 @@ web_proc = None
 # TODO: global cache for executed jobs.  Is there any way to not make this a
 # global in this code base?
 jobs_executed = {}
+
 
 # There are two things going on here.  There are "experiments", which are
 # large-scale things that live in a directory and in this case correspond
@@ -66,57 +68,77 @@ jobs_executed = {}
 # submits them to the queueing system.
 
 
-def parse_args():
-    parser = optparse.OptionParser(usage="\n\tspearmint [options] <experiment/config.pb>")
+class Options:
+    def __init__(self, user_mode='offline', verbose=None, max_concurrent=1, grid_size=20000, max_finished_jobs=10000,
+                 driver='local', web_status_host=None, job='', grid_seed=1, web_status_port=0,
+                 chooser_args='', polling_time=3.0, chooser_module='GPEIOptChooser', web_status=None):
+        self.user_mode = user_mode
+        self.verbose = verbose
+        self.max_concurrent = max_concurrent
+        self.grid_size = grid_size
+        self.max_finished_jobs = max_finished_jobs
+        self.driver = driver
+        self.web_status_host = web_status_host
+        self.job = job
+        self.grid_seed = grid_seed
+        self.web_status_port = web_status_port
+        self.chooser_args = chooser_args
+        self.polling_time = polling_time
+        self.chooser_module = chooser_module
+        self.web_status = web_status
 
-    parser.add_option("--max-concurrent", dest="max_concurrent",
-                      help="Maximum number of concurrent jobs.",
-                      type="int", default=1)
-    parser.add_option("--max-finished-jobs", dest="max_finished_jobs",
-                      type="int", default=10000)
-    parser.add_option("--method", dest="chooser_module",
-                      help="Method for choosing experiments [SequentialChooser, RandomChooser, GPEIOptChooser, GPEIOptChooser, GPEIperSecChooser, GPEIChooser]",
-                      type="string", default="GPEIOptChooser")
-    parser.add_option("--driver", dest="driver",
-                      help="Runtime driver for jobs (local, or sge)",
-                      type="string", default="local")
-    parser.add_option("--method-args", dest="chooser_args",
-                      help="Arguments to pass to chooser module.",
-                      type="string", default="")
-    parser.add_option("--grid-size", dest="grid_size",
-                      help="Number of experiments in initial grid.",
-                      type="int", default=20000)
-    parser.add_option("--grid-seed", dest="grid_seed",
-                      help="The seed used to initialize initial grid.",
-                      type="int", default=1)
-    parser.add_option("--run-job", dest="job",
-                      help="Run a job in wrapper mode.",
-                      type="string", default="")
-    parser.add_option("--polling-time", dest="polling_time",
-                      help="The time in-between successive polls for results.",
-                      type="float", default=3.0)
-    parser.add_option("-w", "--web-status", action="store_true",
-                      help="Serve an experiment status web page.",
-                      dest="web_status")
-    parser.add_option("--port",
-                      help="Specify a port to use for the status web interface.",
-                      dest="web_status_port", type="int", default=0)
-    parser.add_option("--host",
-                      help="Specify a host to use for the status web interface.",
-                      dest="web_status_host", type="string", default=None)
-    parser.add_option("-v", "--verbose", action="store_true",
-                      help="Print verbose debug output.")
-    parser.add_option("--user-mode", dest="user_mode",
-                      help="Choose online/offline user mode",
-                      type="string", default="offline")
 
-    (options, args) = parser.parse_args()
-
-    if len(args) == 0:
-        parser.print_help()
-        sys.exit(0)
-
-    return options, args
+# def parse_args():
+#     parser = optparse.OptionParser(usage="\n\tspearmint [options] <experiment/config.pb>")
+#
+#     parser.add_option("--max-concurrent", dest="max_concurrent",
+#                       help="Maximum number of concurrent jobs.",
+#                       type="int", default=1)
+#     parser.add_option("--max-finished-jobs", dest="max_finished_jobs",
+#                       type="int", default=10000)
+#     parser.add_option("--method", dest="chooser_module",
+#                       help="Method for choosing experiments [SequentialChooser, RandomChooser, GPEIOptChooser, GPEIOptChooser, GPEIperSecChooser, GPEIChooser]",
+#                       type="string", default="GPEIOptChooser")
+#     parser.add_option("--driver", dest="driver",
+#                       help="Runtime driver for jobs (local, or sge)",
+#                       type="string", default="local")
+#     parser.add_option("--method-args", dest="chooser_args",
+#                       help="Arguments to pass to chooser module.",
+#                       type="string", default="")
+#     parser.add_option("--grid-size", dest="grid_size",
+#                       help="Number of experiments in initial grid.",
+#                       type="int", default=20000)
+#     parser.add_option("--grid-seed", dest="grid_seed",
+#                       help="The seed used to initialize initial grid.",
+#                       type="int", default=1)
+#     parser.add_option("--run-job", dest="job",
+#                       help="Run a job in wrapper mode.",
+#                       type="string", default="")
+#     parser.add_option("--polling-time", dest="polling_time",
+#                       help="The time in-between successive polls for results.",
+#                       type="float", default=3.0)
+#     parser.add_option("-w", "--web-status", action="store_true",
+#                       help="Serve an experiment status web page.",
+#                       dest="web_status")
+#     parser.add_option("--port",
+#                       help="Specify a port to use for the status web interface.",
+#                       dest="web_status_port", type="int", default=0)
+#     parser.add_option("--host",
+#                       help="Specify a host to use for the status web interface.",
+#                       dest="web_status_host", type="string", default=None)
+#     parser.add_option("-v", "--verbose", action="store_true",
+#                       help="Print verbose debug output.")
+#     parser.add_option("--user-mode", dest="user_mode",
+#                       help="Choose online/offline user mode",
+#                       type="string", default="offline")
+#
+#     (options, args) = parser.parse_args()
+#
+#     if len(args) == 0:
+#         parser.print_help()
+#         sys.exit(0)
+#
+#     return options, args
 
 
 def get_available_port(portnum):
@@ -132,13 +154,13 @@ def get_available_port(portnum):
 def start_web_view(options, experiment_config, chooser):
     '''Start the web view in a separate process.'''
 
-    from spearmint.web.app import app    
+    from spearmint.web.app import app
     port = get_available_port(options.web_status_port)
     print "Using port: " + str(port)
     if options.web_status_host:
         print "Listening at: " + str(options.web_status_host)
     app.set_experiment_config(experiment_config)
-    app.set_chooser(options.chooser_module,chooser)
+    app.set_chooser(options.chooser_module, chooser)
     debug = (options.verbose == True)
     start_web_app = lambda: app.run(debug=debug, port=port, host=options.web_status_host)
     proc = multiprocessing.Process(target=start_web_app)
@@ -147,20 +169,26 @@ def start_web_view(options, experiment_config, chooser):
     return proc
 
 
-def main():
+def main(exp_config, user_mode='offline', verbose=None, max_concurrent=1, grid_size=20000, max_finished_jobs=10000,
+         driver='local', web_status_host=None, job='', grid_seed=1, web_status_port=0, chooser_args='',
+         polling_time=3.0, chooser_module='GPEIOptChooser', web_status=None):
     # Life universe and everything ...
     np.random.seed(42)
     random.seed(42)
     config.strikes = 0
 
-    (options, args) = parse_args()
+    # (options, args) = parse_args()
 
+    options = Options(user_mode, verbose, max_concurrent, grid_size, max_finished_jobs, driver,
+                      web_status_host, job, grid_seed, web_status_port, chooser_args,
+                      polling_time, chooser_module, web_status)
     if options.job:
         job_runner(load_job(options.job))
         exit(0)
 
-    experiment_config = args[0]
-    expt_dir  = os.path.dirname(os.path.realpath(experiment_config))
+    # experiment_config = args[0]
+    experiment_config = exp_config
+    expt_dir = os.path.dirname(os.path.realpath(experiment_config))
     log("Using experiment configuration: " + experiment_config)
     log("experiment dir: " + expt_dir)
 
@@ -172,14 +200,14 @@ def main():
     check_experiment_dirs(expt_dir)
 
     # Load up the chooser module.
-    module  = importlib.import_module('chooser.' + options.chooser_module)
+    module = importlib.import_module('spearmint.chooser.' + options.chooser_module)
     chooser = module.init(expt_dir, options.chooser_args)
 
     if options.web_status:
         web_proc = start_web_view(options, experiment_config, chooser)
 
     # Load up the job execution driver.
-    module = importlib.import_module('driver.' + options.driver)
+    module = importlib.import_module('spearmint.driver.' + options.driver)
     driver = module.init()
 
     # Loop until we run out of jobs.
@@ -218,14 +246,14 @@ def attempt_dispatch(expt_config, expt_dir, chooser, driver, options):
 
     # Returns lists of indices.
     candidates = expt_grid.get_candidates()
-    pending    = expt_grid.get_pending()
-    complete   = expt_grid.get_complete()
-    executed   = expt_grid.get_executed()
+    pending = expt_grid.get_pending()
+    complete = expt_grid.get_complete()
+    executed = expt_grid.get_executed()
 
     n_candidates = candidates.shape[0]
-    n_pending    = pending.shape[0]
-    n_complete   = complete.shape[0]
-    n_executed   = executed.shape[0]
+    n_pending = pending.shape[0]
+    n_complete = complete.shape[0]
+    n_executed = executed.shape[0]
 
     log("%d candidates   %d pending   %d complete   %d executed" %
         (n_candidates, n_pending, n_complete, n_executed))
@@ -246,7 +274,7 @@ def attempt_dispatch(expt_config, expt_dir, chooser, driver, options):
 
     if n_complete >= options.max_finished_jobs:
         log("Maximum number of finished jobs (%d) reached."
-                         "Exiting" % options.max_finished_jobs)
+            "Exiting" % options.max_finished_jobs)
         return False
 
     if n_candidates == 0:
@@ -305,9 +333,9 @@ def attempt_dispatch(expt_config, expt_dir, chooser, driver, options):
         if exp.count != 0:
             return False
         # start a bunch of candidate jobs if possible
-        #to_start = min(options.max_concurrent - n_pending, n_candidates)
-        #log("Trying to start %d jobs" % (to_start))
-        #for i in xrange(to_start):
+        # to_start = min(options.max_concurrent - n_pending, n_candidates)
+        # log("Trying to start %d jobs" % (to_start))
+        # for i in xrange(to_start):
 
         # Ask the chooser to pick the next candidate
         log("Choosing next candidate... ")
@@ -332,15 +360,15 @@ def attempt_dispatch(expt_config, expt_dir, chooser, driver, options):
 
         # Convert this back into an interpretable job and add metadata.
         job = Job()
-        job.id        = job_id
-        job.expt_dir  = expt_dir
-        job.name      = expt.name
-        job.language  = expt.language
-        job.status    = 'submitted'
-        job.submit_t  = int(time.time())
+        job.id = job_id
+        job.expt_dir = expt_dir
+        job.name = expt.name
+        job.language = expt.language
+        job.status = 'submitted'
+        job.submit_t = int(time.time())
         job.param.extend(expt_grid.get_params(job_id))
 
-        #TODO: (@omid) check if the job has been previously completed; if so
+        # TODO: (@omid) check if the job has been previously completed; if so
         #      mark the job as completed and use the cached value
         params = job_params(job)
         for key, val in params.items():
@@ -353,7 +381,7 @@ def attempt_dispatch(expt_config, expt_dir, chooser, driver, options):
         if params in jobs_executed:
             jid = jobs_executed[params]
             print ">>>> Bypassing job execution."
-            for stat in ['status', 'values', 'durs'] :
+            for stat in ['status', 'values', 'durs']:
                 dic = getattr(expt_grid, stat)
                 dic[job_id] = dic[jid]
             expt_grid._save_jobs()
@@ -403,6 +431,7 @@ def check_experiment_dirs(expt_dir):
     job_subdir = os.path.join(expt_dir, 'jobs')
     check_dir(job_subdir)
 
+
 # Cleanup locks and processes on ctl-c
 def sigint_handler(signal, frame):
     if web_proc:
@@ -412,8 +441,7 @@ def sigint_handler(signal, frame):
     sys.exit(0)
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     print "setting up signal handler..."
     signal.signal(signal.SIGINT, sigint_handler)
     main()
-
