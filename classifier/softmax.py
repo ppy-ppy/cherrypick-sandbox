@@ -68,11 +68,3 @@ class SoftMax:
         result = np.exp(result)
         result = result / np.sum(result, axis=1, keepdims=True)  # data_num*class_num
         return result.argmax(axis=1)
-
-# from train_classifier import create_samples
-# softmax = SoftMax()
-# training, output = create_samples(meta_jobs, data, 400)
-# # softmax.train(training, output)
-# Y_test=softmax.test(training)
-# # print softmax.w_input_hidden
-# print Y_test
