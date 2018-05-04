@@ -243,11 +243,11 @@ def check_or_create_cluster(vm, cluster_size):
 
 
 ###############################################################################################################
-# Phase 4: Continue with BO process after taking in the actual running time.
 ###############################################################################################################
 
 
 def find_and_update_run(vm, cluster_size, exp_name, time):
+def find_and_update_run(vm, cluster_size, exp_name, time, scale):
     exp = Exp.find(exp_name)
     runs = exp.find_runs(vm, int(cluster_size))
     if float(time) != -1:
@@ -256,6 +256,7 @@ def find_and_update_run(vm, cluster_size, exp_name, time):
         # print vm
     # print runs
     output_test_time_ernest(vm, int(cluster_size), exp_name, float(time))
+    output_test_time_ernest(vm, int(cluster_size), exp_name, float(time), str(scale))
     return runs[0]
 
 

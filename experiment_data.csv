@@ -1,0 +1,24 @@
+# Experiment,VirtualMachine,Cpus,Ram,MachinesNumber,Time,Cost,Scale
+terasort,c3.large,8,8.0,2,116.43,106.831382478,3
+terasort,c3.large,8,8.0,4,87.29,106.831382478,3
+terasort,c3.large,8,8.0,8,98.42,106.831382478,3
+terasort,c3.large,8,8.0,16,58.86,106.831382478,3
+terasort,c3.medium,4,4.0,2,77.11,106.831382478,3
+terasort,c3.medium,4,4.0,4,55.93,106.831382478,3
+terasort,c3.medium,4,4.0,8,49.8,106.831382478,3
+terasort,c3.medium,4,4.0,16,48.09,106.831382478,3
+terasort,c3.xlarge,16,16.0,2,83.13,106.831382478,3
+terasort,c3.xlarge,16,16.0,4,30.001736861286403,106.831382478,3
+terasort,c3.xlarge,16,16.0,8,73.72,106.831382478,3
+terasort,m1.large,4,8.0,2,73.92,106.831382478,3
+terasort,m1.large,4,8.0,4,61.87,106.831382478,3
+terasort,m1.large,4,8.0,8,48.76,106.831382478,3
+terasort,m1.large,4,8.0,16,46.60,106.831382478,3
+terasort,m1.medium,2,4.0,2,93.58,106.831382478,3
+terasort,m1.medium,2,4.0,4,63.79,106.831382478,3
+terasort,m1.medium,2,4.0,8,52.82,106.831382478,3
+terasort,m1.medium,2,4.0,16,53.89,106.831382478,3
+terasort,m1.xlarge,8,16.0,2,70.99,106.831382478,3
+terasort,m1.xlarge,8,16.0,4,51.05,106.831382478,3
+terasort,m1.xlarge,8,16.0,8,45.91,106.831382478,3
+terasort,m1.xlarge,8,16.0,16,54.62,106.831382478,3

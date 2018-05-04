@@ -14,7 +14,7 @@ def establish_csv():
     return None
 
 
-def output_test_time_ernest(vm, cluster_size, exp_name, time):
+def output_test_time_ernest(vm, cluster_size, exp_name, time, scale):
     exp = Experiment.find(exp_name)
     runs = exp.find_runs(vm, int(cluster_size))
     vm_type = runs[0].config
