@@ -9,11 +9,22 @@ from ernest.output_data import *
 from spearmint.schema import Experiment as Exp
 from runtest import *
 from spearmint import main as bo
+from classifier import main as job_classifier
 
 print sys.path
 
 ###############################################################################################################
 # Phase 1: Create the experiment (if new), start BO, and return the next sample/current best configuration.
+###############################################################################################################
+
+
+def softmax_application_classifier(input_data):
+    (io_weight, cpu_weight), job_class = job_classifier.softmax_classifier(input_data)
+    return (io_weight, cpu_weight), job_class
+
+
+###############################################################################################################
+# Phase 2: Create the experiment (if new), start BO, and return the next sample/current best configuration.
 ###############################################################################################################
 
 
@@ -133,7 +144,7 @@ def select_configuration(user_id, job_id, data_size, timestamp, is_to_optimize=T
 
 
 ###############################################################################################################
-# Phase 2: Check if the cluster under selected configuration exists. If not, create it.
+# Phase 3: Check if the cluster under selected configuration exists. If not, create it.
 ##############################################################################################################
 
 def get_controllerip():
@@ -232,7 +243,7 @@ def check_or_create_cluster(vm, cluster_size):
 
 
 ###############################################################################################################
-# Phase 3: Continue with BO process after taking in the actual running time.
+# Phase 4: Continue with BO process after taking in the actual running time.
 ###############################################################################################################
 
 
@@ -261,4 +272,5 @@ if __name__ == '__main__':
     # else:
     #     print "Master IP: ", master_ip
 
-    find_and_update_run("c3.xlarge", "2", "terasort", "50")
+    # find_and_update_run("c3.xlarge", "2", "terasort", "50")
+    print softmax_application_classifier([1, 3, 1, 1, 0])
