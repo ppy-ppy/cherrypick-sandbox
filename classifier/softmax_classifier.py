@@ -28,6 +28,7 @@ w_input_hidden=[[ -6.66248501e-02,   1.01387411e-01,  -2.15783652e-02,
           4.48524036e-02,  -3.43627926e-02,   2.72652607e-01,
           1.19090254e-01,   1.96726155e-01,   1.09699846e-01,
           2.09814745e-01,  -1.34028502e-02,  -6.32211498e-03,
+          2.09814745e-01,  -1.34028502e-02,  -6.32211498e-03,
          -1.96929245e-02,   2.33576327e-01,   1.92697574e-01,
           9.36672350e-02,  -1.29748937e-02,   1.57187681e-01,
           3.01843610e-02,  -4.25325368e-02,   1.70296641e-01,
@@ -409,22 +410,20 @@ Learning_Rate=1e-2
 Hidden_Size=100
 Reg=1e-3
 
-class SoftMax_Classifier:
+
+class SoftMaxClassifier:
     def __init__(self, hidden_size=Hidden_Size, class_num=Class_Num, features_num=Features_Num,
                  learning_rate=Learning_Rate, reg=Reg):
 
-        import numpy as np
-        #print(features_num, hidden_size)
-        self.w_input_hidden = w_input_hidden#0.01 * np.random.rand(features_num, hidden_size)
-        self.b_input_hidden = b_input_hidden#np.zeros((1, hidden_size))
-        self.w_hidden_output =w_hidden_output# 0.01 * np.random.rand(hidden_size, class_num)
-        self.b_hidden_output = b_hidden_output#np.zeros((1, class_num))
+        self.w_input_hidden = w_input_hidden  # 0.01 * np.random.rand(features_num, hidden_size)
+        self.b_input_hidden = b_input_hidden  # np.zeros((1, hidden_size))
+        self.w_hidden_output = w_hidden_output  # 0.01 * np.random.rand(hidden_size, class_num)
+        self.b_hidden_output = b_hidden_output  # np.zeros((1, class_num))
         self.learning_rate = learning_rate
         self.reg = reg
 
     def test(self, input_data):
 
-        #cpu io
         io_weight= input_data[0] * terasort_IO_Measure_Weight + input_data[1] * testdfsio_IO_Measure_Weight + input_data[2] * tpcds_IO_Measure_Weight + input_data[3] * spark_IO_Measure_Weight + input_data[4] * kmeans_IO_Measure_Weight  # IO
         cpu_weight= input_data[0] * terasort_CPU_Measure_Weight + input_data[1] * testdfsio_CPU_Measure_Weight + input_data[2] * tpcds_CPU_Measure_Weight + input_data[3] * spark_CPU_Measure_Weight + input_data[4] * kmeans_CPU_Measure_Weight  # CPU
         total_weight=io_weight+cpu_weight
@@ -447,21 +446,25 @@ def softmax_classifier(input_data):
     cpu_weight = input_data[0] * terasort_CPU_Measure_Weight + input_data[1] * testdfsio_CPU_Measure_Weight + \
                  input_data[2] * tpcds_CPU_Measure_Weight + input_data[3] * spark_CPU_Measure_Weight + input_data[
                                                                                                            4] * kmeans_CPU_Measure_Weight  # CPU
+    print io_weight, cpu_weight
     total_weight = io_weight + cpu_weight
     io_weight = io_weight / total_weight
     cpu_weight = cpu_weight / total_weight
+    print io_weight, cpu_weight
 
     hidden_output = np.maximum(0, np.dot(input_data, w_input_hidden) + b_input_hidden)
     result = np.dot(hidden_output, w_hidden_output) + b_hidden_output  # data_num*class_num
-
+    print result
     result = np.exp(result)
     result = result / np.sum(result, axis=1, keepdims=True)  # data_num*class_num
+    print result
     # print(result)
     return (io_weight, cpu_weight), result.argmax(axis=1)[0]
 
 if __name__ == '__main__':
 
-    print(softmax_classifier([1, 3, 1, 1, 0]))
+    print(softmax_classifier([0, 10, 0, 0, 0]))
+    # print(softmax_classifier([1, 3, 1, 1, 0]))
 
 
 
