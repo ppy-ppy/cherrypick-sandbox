@@ -15,9 +15,9 @@ def calculate_measure_weight(index, table, measure):
     else:
         raise Exception("Only 'io' or 'cpu' measures allowed!")
 
-    first = table.cell(index + 1, measure_index[0]).value
-    medium = table.cell(index + 1, measure_index[1]).value
-    last = table.cell(index + 1, measure_index[2]).value
+    first = table.cell(index, measure_index[0]).value
+    medium = table.cell(index, measure_index[1]).value
+    last = table.cell(index, measure_index[2]).value
 
     pre_weight = get_error(first, medium)
     post_weight = get_error(medium, last)
@@ -33,8 +33,8 @@ def get_weight(meta_jobs_length, data):
     cpu_weights = []
 
     for index in range(meta_jobs_length):
-        curr_io_weight = calculate_measure_weight(index, table, "io")
-        curr_cpu_weight = calculate_measure_weight(index, table, "cpu")
+        curr_io_weight = calculate_measure_weight(index + 1, table, "io")
+        curr_cpu_weight = calculate_measure_weight(index + 1, table, "cpu")
         io_weights.append(curr_io_weight)
         cpu_weights.append(curr_cpu_weight)
 

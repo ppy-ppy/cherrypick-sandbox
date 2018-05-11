@@ -1,44 +1,32 @@
-from sandbox import job_classifier,config_selection, find_cluster, update_bo
+from sandbox import config_selection, job_analysis
 
 
-# Phase 1: Create the experiment (if new), start BO, and return the next sample/current best configuration.
-def softmax_application_classifier(input_data):
-    (io_weight, cpu_weight), job_class = job_classifier.softmax_classifier(input_data)
-    return (io_weight, cpu_weight), job_class
-
-
-# Phase 2: Create the experiment (if new), start BO, and return the next sample/current best configuration.
 def select_configuration(user_id, job_id, data_size, timestamp, is_to_optimize=True):
-    exp_name, vm, vcpus, ram, disk, cluster_size = \
-        config_selection.select_configuration(user_id, job_id, data_size, timestamp, is_to_optimize)
+    io_weight, cpu_weight = job_analysis.get_io_cpu_analysis(job_id)
+    print io_weight, cpu_weight
 
-    return exp_name, vm, vcpus, ram, disk, cluster_size
+    exp_name, vm, cluster_size, vcpus, ram, disk = config_selection.\
+        select_configuration(user_id, job_id, data_size, timestamp, io_weight, cpu_weight, is_to_optimize)
 
+    print "======================================================"
+    print "Job ID: ", job_id
+    print "User ID: ", user_id
+    print "Data Size (G): ", data_size
+    print "Best Configuration: "
+    print "\tVCPU(s): ", vcpus
+    print "\tRAM (G): ", ram
+    print "\tDISK (G): ", disk
+    print "\tSIZE: ", cluster_size
+    print "Recommended Configuration: ", vm, "*", cluster_size
 
-# Phase 3: Check if the cluster under selected configuration exists. If not, create it.
-def check_or_create_cluster(vm, cluster_size):
-    ip_address = find_cluster.check_or_create_cluster(vm, cluster_size)
-    return ip_address
-
-
-# Phase 4: Receive the running time and update BO
-def find_and_update_run(vm, cluster_size, exp_name, time, scale):
-    run = update_bo.find_and_update_run(vm, cluster_size, exp_name, time, scale)
-    return run
+    return exp_name, vm, cluster_size, vcpus, ram, disk
 
 
 if __name__ == '__main__':
-    # exp_name, vm, vcpus, ram, disk, cluster_size = select_configuration("user9", "job", "1", "20180428", True)
-    # print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
-    # print exp_name, vm, vcpus, ram, disk, cluster_size
+    job_id = "terasort"
+    data_size = 1
+    user_id = "weight22"
+    timestamp = "20180511"
 
-    # check_or_create_cluster(vm, cluster_size)
-    # print "cluster"
-    # master_ip = check_or_create_cluster("c3.large", "8")
-    # if not master_ip:
-    #     print "The cluster is starting..."
-    # else:
-    #     print "Master IP: ", master_ip
-
-    # find_and_update_run("c3.xlarge", "2", "terasort", "50")
-    print softmax_application_classifier([1, 3, 1, 1, 0])
+    exp_name, vm, vcpus, ram, disk, cluster_size = \
+        select_configuration(user_id, job_id, str(data_size), timestamp, False)
