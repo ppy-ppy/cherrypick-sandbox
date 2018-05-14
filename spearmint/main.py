@@ -26,7 +26,8 @@ import random
 import signal
 import socket
 import sys
-
+sys.path.append(os.getcwd())
+print os.getcwd()
 import config
 from schema import Experiment as Exp
 

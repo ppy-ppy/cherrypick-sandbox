@@ -6,7 +6,7 @@ from openstack import OPENSTACK_MACHINES
 
 def create_database():
     map(lambda tbl: tbl.createTable(),
-        [VirtualMachineType, Configuration, Experiment, Run, BestConfiguration])
+        [VirtualMachineType, Configuration, Experiment, Run, BestConfiguration, JobInfo, Runtime])
     create_virtual_machines()
 
 
@@ -56,7 +56,7 @@ class VirtualMachineType(SQLObject):
 class Configuration(SQLObject):
     count = IntCol()
     vm = ForeignKey('VirtualMachineType')
-    runs = MultipleJoin('Run')
+    # runs = MultipleJoin('Run')
 
     @property
     def cost(self):
@@ -110,8 +110,41 @@ class Run(SQLObject):
 
 
 class BestConfiguration(SQLObject):
-    exp = ForeignKey('Experiment')
+    job = ForeignKey('JobInfo')
+    data_size = FloatCol()
     config = ForeignKey('Configuration')
     cost = FloatCol()
+
+
+# Add new tables
+class JobInfo(SQLObject):
+    name = StringCol()
+    user_id = StringCol()
+    cpu_percentage = FloatCol()
+    io_percentage = FloatCol()
+
+    @classmethod
+    def find_job_info(kls, job_name):
+        job = kls.selectBy(name=job_name)
+        return list(job)
+
+
+class Runtime(SQLObject):
+    job = ForeignKey('JobInfo')
+    data_size = FloatCol()
+    config = ForeignKey('Configuration')
+    # config_id = IntCol()
+    run_time = FloatCol()
+
+    @classmethod
+    def find_job_runtime(kls, job_name, data_size, vm_name, count):
+        vm = VirtualMachineType.selectBy(name=vm_name).getOne()
+        vm_id = vm.id
+        job_id = JobInfo.selectBy(name=job_name)
+        config = Configuration.selectBy(id=vm_id, count = count).getOne()
+        config_id = config.id
+        runtime = kls.selectBy(job=job_id, data_size=data_size, config=config_id).getOne()
+        return runtime.run_time
+
 
 setup_connection()
