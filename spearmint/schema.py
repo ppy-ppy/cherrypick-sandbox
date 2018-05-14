@@ -6,7 +6,7 @@ from openstack import OPENSTACK_MACHINES
 
 def create_database():
     map(lambda tbl: tbl.createTable(),
-        [VirtualMachineType, Configuration, Experiment, Run, BestConfiguration, JobInfo, Runtime])
+        [VirtualMachineType, Configuration,  BestConfiguration, JobInfo, Runtime])
     create_virtual_machines()
 
 
@@ -81,32 +81,6 @@ class Configuration(SQLObject):
     @property
     def name(self):
         return "%d x %s.%s" % (self.count, self.vm_type, self.vm_size)
-
-
-class Experiment(SQLObject):
-    name = StringCol()
-    count = IntCol()
-    runs = MultipleJoin('Run', joinColumn='exp_id')
-
-    def find_runs(self, vm_name, machine_count):
-        vm = VirtualMachineType.selectBy(name=vm_name).getOne()
-        config = Configuration.selectBy(vm=vm, count=machine_count).getOne()
-        return list(Run.selectBy(exp=self, config=config))
-
-    @classmethod
-    def find(kls, name):
-        return kls.selectBy(name=name).getOne()
-
-
-class Run(SQLObject):
-    exp = ForeignKey('Experiment')
-    config = ForeignKey('Configuration')
-    time = FloatCol()
-    num = IntCol()
-
-    @property
-    def cost(self):
-        return self.config.cost
 
 
 class BestConfiguration(SQLObject):
