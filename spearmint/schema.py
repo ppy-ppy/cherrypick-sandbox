@@ -97,25 +97,33 @@ class JobInfo(SQLObject):
     cpu_percentage = FloatCol()
     io_percentage = FloatCol()
 
+    def find_runs(self, vm_name, machine_count, data_size):
+        vm = VirtualMachineType.selectBy(name=vm_name).getOne()
+        config = Configuration.selectBy(vm=vm, count=machine_count).getOne()
+        return list(Runtime.selectBy(job=self, data_size=data_size, config=config))
+
     @classmethod
-    def find_job_info(kls, job_name):
-        job = kls.selectBy(name=job_name)
-        return list(job)
+    def find_job_info(kls, job_name, user_id):
+        return kls.selectBy(name=job_name, user_id=user_id).getOne()
 
 
 class Runtime(SQLObject):
     job = ForeignKey('JobInfo')
     data_size = FloatCol()
     config = ForeignKey('Configuration')
-    # config_id = IntCol()
     run_time = FloatCol()
+    num = IntCol()
+
+    @property
+    def cost(self):
+        return self.config.cost
 
     @classmethod
     def find_job_runtime(kls, job_name, data_size, vm_name, count):
         vm = VirtualMachineType.selectBy(name=vm_name).getOne()
         vm_id = vm.id
         job_id = JobInfo.selectBy(name=job_name)
-        config = Configuration.selectBy(id=vm_id, count = count).getOne()
+        config = Configuration.selectBy(id=vm_id, count=count).getOne()
         config_id = config.id
         runtime = kls.selectBy(job=job_id, data_size=data_size, config=config_id).getOne()
         return runtime.run_time

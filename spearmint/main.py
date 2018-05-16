@@ -29,7 +29,6 @@ import sys
 sys.path.append(os.getcwd())
 print os.getcwd()
 import config
-from schema import Experiment as Exp
 
 try:
     import simplejson as json
@@ -300,10 +299,10 @@ def attempt_dispatch(expt_config, expt_dir, chooser, driver, options):
         job_id = best_job
         print job_id
         expt_grid.set_candidate(job_id)
-        exp = Exp.find(expt.name)
-        print exp.count
-        exp.count += 1
-        print exp.count
+        # exp = Exp.find(expt.name)
+        # print exp.count
+        # exp.count += 1
+        # print exp.count
         log("selected job %d from the grid." % (job_id))
 
         # Convert this back into an interpretable job and add metadata.
@@ -330,9 +329,9 @@ def attempt_dispatch(expt_config, expt_dir, chooser, driver, options):
         return True
 
     else:
-        exp = Exp.find(expt.name)
-        if exp.count != 0:
-            return False
+        # exp = Exp.find(expt.name)
+        # if exp.count != 0:
+        #     return False
         # start a bunch of candidate jobs if possible
         # to_start = min(options.max_concurrent - n_pending, n_candidates)
         # log("Trying to start %d jobs" % (to_start))

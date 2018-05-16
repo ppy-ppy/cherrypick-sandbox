@@ -13,16 +13,16 @@ variable {
     name: "ram"
     type: INT
     size: 1
-    min: 1
-    max: 32
+    min: 2
+    max: 64
 }
 
 variable {
     name: "disk"
     type: INT
     size: 1
-    min: 1
-    max: 160
+    min: 2
+    max: 128
 }
 
 variable {

@@ -1,10 +1,10 @@
 import math
 import os
 
-# TODO: EXP_TYPE = JOB_ID + DATA_SIZE
 EXP_PATH = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 EXP_TYPE = "template"
-APP = "job_id"
+USER = "user_id"
+DATA_GROUP = "data_size"
 # EXPERIMENT = ['terasort', 'testdfsio', 'tpcds', 'spark', 'kmeans']
 # TODO: receive parameters for weight
 # WEIGHT = [8, 1, 1, 1, 1]
