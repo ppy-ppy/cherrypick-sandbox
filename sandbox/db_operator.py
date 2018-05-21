@@ -1,3 +1,4 @@
+import math
 from spearmint.schema import *
 import experiment
 
@@ -20,16 +21,23 @@ def insert_run_time(job_id, data_size, vm_name, vm_count, run_time):
             run_time=run_time)
 
 
-def insert_best_configuration(job_name, user_id, vm_name, vm_count, data_size, cost):
-    vm_id = VirtualMachineType.selectBy(name=vm_name).getOne().id
-    job_id = JobInfo.selectBy(name=job_name, user_id=user_id).getOne().id
-    config_id = Configuration.selectBy(count=vm_count, vm=vm_id).getOne().id
-    BestConfiguration(job=job_id, data_size=data_size, config=config_id, cost=cost)
+def insert_best_configuration(exp, config, cost):
+    vm_id = VirtualMachineType.selectBy(name=config.vm.name).getOne().id
+    job_id = JobInfo.selectBy(name=exp.job_id, user_id=exp.user_id).getOne().id
+    config_id = Configuration.selectBy(count=config.machine_count, vm=vm_id).getOne().id
+    BestConfiguration(job=job_id, data_size=float(exp.data_group), config=config_id, cost=cost)
 
 
 def add_flavor(vm_name, vcpu, ram, disk, cost):
     vm = experiment.VirtualMachine(vm_name, vcpu, ram, disk)
     vm.insert_vm(cost)
+
+
+def get_run_cost(exp, config):
+    job = JobInfo.find_job_info(exp.job_id, exp.user_id)
+    runs = job.find_runs(config.vm.name, config.machine_count, float(exp.data_group))
+    total_cost = math.log(runs[0].cost) * runs[0].run_time
+    return total_cost
 
 
 if __name__ == '__main__':

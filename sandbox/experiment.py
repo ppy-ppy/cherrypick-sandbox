@@ -1,3 +1,5 @@
+import math
+
 import job_analysis
 from spearmint.schema import VirtualMachineType as VM
 from spearmint.schema import Configuration as Config
@@ -26,6 +28,10 @@ class VirtualMachine(object):
     def insert_vm(self, cost):
         VM(name=self.name, ram=self.ram, cpu_count=self.vcpu, root_disk=self.disk, cost=cost)
 
+    def cost(self):
+        vm = VM.selectBy(name=self.name).getOne()
+        return float(vm.cost)
+
 
 class Configuration(object):
     machine_space = [2, 4, 8, 16]
@@ -52,9 +58,15 @@ class Configuration(object):
             config = Config.selectBy(vm=vm_0, count=self.machine_count).getOne()
         return config
 
+    @property
+    def cost(self):
+        vm_cost = self.vm.cost
+        cost = vm_cost * self.machine_count
+        return math.log(cost)
+
 
 class Experiment(object):
-    data_split = [0, 1, 3, 5]
+    data_split = [0, 1, 5, 10, 100]
 
     def __init__(self, job_id, user_id, data_size, io_percentage=None, cpu_percentage=None, best_configuration=None):
 
