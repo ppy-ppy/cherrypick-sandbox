@@ -36,7 +36,3 @@ def generate_testing_data(lowest, highest):
 
     return test_data
 
-
-
-if __name__ == '__main__':
-    testing_data = generate_testing_data(1, 10)

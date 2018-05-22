@@ -150,3 +150,5 @@ results/*
 ernest/lowest\.csv
 
 ernest/output\.csv
+ernest/models/*
+!ernest/model/__init__.py

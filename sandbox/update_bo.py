@@ -1,7 +1,6 @@
-from env_config import *
-from ernest.output_data import *
-from spearmint.schema import JobInfo
+from ernest.bak.output_data import *
 from sandbox.experiment import Experiment
+from spearmint.schema import JobInfo
 
 
 def find_and_update_run(vm, cluster_size, user_id, job_id, time, scale):
@@ -10,7 +9,7 @@ def find_and_update_run(vm, cluster_size, user_id, job_id, time, scale):
     runs = job.find_runs(vm, int(cluster_size))
 
     if float(time) != -1:
-        runs[0].time = runs[0].time * GAMMA + (1 - GAMMA) * float(time)
+        runs[0].time = float(time)
         runs[0].num = 1
         # print vm
     # print runs

@@ -1,10 +1,104 @@
-import numpy as np
-import scipy
-from scipy.optimize import nnls
 import csv
+import math
 import sys
+
+import numpy as np
+from scipy.optimize import nnls
+
+from ernest.bak.predictor import Predictor
+from spearmint.schema import *
 from spearmint.schema import VirtualMachineType as VM
 
+# TODO: 1. experiment_data.csv, which file generates/uses it?
+# TODO: 2. add an interface in main.py [Phase 5], taking in "deadline" instead of a static one
+# TODO: 3. clear the folder "ernest", delete useless files
+#
+#
+# class Descide(object):
+#
+#
+#     def __init__(self):
+#         return self
+#
+#
+#     def DeadlineDescide(self, predictor_time, deadline):
+
+FILE_PATH = os.path.abspath(os.path.dirname(__file__))
+OUTPUT_PATH = os.path.join(FILE_PATH, "lowest.csv")
+INPUT_PATH = os.path.join(FILE_PATH, "rcv1-parsed.csv")
+deadline = 60
+
+
+def establish_csv():
+    csv_file = open(OUTPUT_PATH, 'w')
+    writer = csv.writer(csv_file)
+    writer.writerow(['Machines', 'Time', 'Cost'])
+    return None
+
+
+def get_predictor_time():
+
+
+
+    predicted_data=[]
+
+    pred = Predictor(data_file=INPUT_PATH)
+
+    model = pred.fit()
+
+    test_data = [[i, 1.0] for i in xrange(4, 128, 4)]
+
+    predicted_times = pred.predict_all(test_data)
+
+    for i in xrange(0, len(test_data)):
+        predicted_data.append([test_data[i][0]])
+        predicted_data[i].append(predicted_times[i])
+
+    for i in range(len(predicted_data)):
+        for j in range(len(predicted_data[i])):
+            predicted_data[i][j] = float(predicted_data[i][j])
+    return predicted_data
+
+
+def in_time_predicted(compare_data):
+    in_time_data = []
+
+    for i in range(len(compare_data)):
+        if compare_data[i][2] <= deadline:
+            in_time_data.append(compare_data[i])
+            # del predictor_data[i]
+        else:
+            continue
+    return in_time_data
+
+
+def get_lowest_cost(compare_data):
+    in_time_data = in_time_predicted(compare_data)
+    cost = []
+    lowest_cost_configuration = []
+    print "###################"
+    for i in range(len(in_time_data)):
+        price = VM.selectBy(name = in_time_data[i][1]).getOne().cost
+        cost.append(math.log(price)*in_time_data[i][0]*in_time_data[i][2])
+        # cost.append(in_time_data[i][0]*in_time_data[i][1]*price)
+
+    lowest_cost = min(cost)
+    a = cost.index(lowest_cost)
+    lowest_cost_configuration.append(in_time_data[a][0])
+    lowest_cost_configuration.append(in_time_data[a][1])
+    lowest_cost_configuration.append(lowest_cost)
+
+    # if not os.path.exists(OUTPUT_PATH):
+    #     self.establish_csv()
+    #     with open(OUTPUT_PATH, 'a') as csv_file:
+    #         writer = csv.writer(csv_file)
+    #         writer.writerow(lowest_cost_configuration)
+    #
+    # else:
+    #     with open(OUTPUT_PATH, 'a') as csv_file:
+    #         writer = csv.writer(csv_file)
+    #         writer.writerow(lowest_cost_configuration)
+    return lowest_cost_configuration
 
 class Predictor(object):
     def __init__(self, training_data_in=[], data_file=None):
@@ -63,14 +157,10 @@ class Predictor(object):
             print "###"
             print p[4]
             predicted = self.predict(p[3], p[1], p[2], p[0])
-            # print p
-            print predicted
-            # if (p[3]==self.training_data[3])&(p[1]==self.training_data[1])&(p[2]==self.training_data[2])&(p[0]==self.training_data[0]):
-            #     print p[4]
             training_errors.append(predicted / p[4])
 
             # print "#######"
-            # print predicted
+            print predicted
         print "Average training error %f%%" % ((np.mean(training_errors) - 1.0) * 100.0)
         return self.model[0]
 
@@ -86,7 +176,7 @@ class Predictor(object):
         RAM = training_point[2]
         # print np.log(CPU)
         # print np.log(RAM)
-        return [1.0, float(scale) / (float(mc)*float(CPU)), np.log(mc), float(mc)]
+        return [1, float(scale) / (float(mc)*np.log(CPU)*np.log(RAM)), np.log(mc), float(mc)]
 
     # def get_test_data(self):
     #     test_data_list = []
@@ -96,7 +186,7 @@ class Predictor(object):
     #     print test_data_list
 
     def train_data(self):
-        # print "!!!!!!!!!!!!!"
+        # print self.training_data
         return self.training_data
 
 
@@ -118,57 +208,22 @@ if __name__ == "__main__":
 
     train_data = pred.train_data()
 
-    # print train_data
-
     test_data = []
-
-    predicted_times_list = []
+    compare_data = []
 
     print "change mc number"
+    print train_data
     for i in range(len(train_data)):
-        for j in range(1, 10, 1):
-            test_data.append([train_data[i][0], train_data[i][1], train_data[i][2], j, train_data[i][4]])
-    predicted_times = pred.predict_all(test_data)
-    print len(test_data)
-    print len(list(predicted_times))
-
-    temp_list = test_data
-
-    for i in range(0, len(test_data)-1):
-        temp_list[i].append(predicted_times[i])
-    predicted_times_list = temp_list
-    # print predicted_times_list
+        # for j in range(1, 6):
+        #     j += 0.5
+        test_data.append([train_data[i][0], train_data[i][1], train_data[i][2], 3, train_data[i][5]])
+    predicted_times = np.ndarray.tolist(pred.predict_all(test_data))
+    for j in range(len(train_data)):
+        compare_data.append([train_data[j][0],train_data[j][5],predicted_times[j]])
+        print compare_data[j]
+    lowest_config = get_lowest_cost(compare_data)
+    print lowest_config
 
     for i in xrange(0, len(test_data)):
         predictor_data.append([test_data[i][0]])
         predictor_data[i].append(predicted_times[i])
-
-
-
-        # print "change scale"
-        # for i in range (17):
-        #     # print i
-        #     if (i == 2)|(i == 4)|(i == 8)|(i == 16):
-        #         test_data = [[i, train_data[j][1], train_data[j][2], train_data[j][3], 1.0]]
-        #         predicted_times = pred.predict_all(test_data)
-        #         print test_data
-                # print train_data[j]
-                # print predicted_times
-
-    # for j in range(len(train_data)):
-    #     test_data = [[train_data[j][0], , train_data[j][2], train_data[j][3], 1.0] for i in range(1, 4)]
-    #     predicted_times = pred.predict_all(test_data)
-    #     print "change scale"
-    #     print predicted_times
-
-
-
-    # predicted_times = pred.predict_all(test_data)
-    # print
-    # print "Machines, Predicted Time"
-    # for i in xrange(0, len(test_data)):
-    #     # print test_data[i][0], predicted_times[i]
-    #     predictor_data.append([test_data[i][0]])
-    #     predictor_data[i].append(predicted_times[i])
-        # print predictor_data
-
