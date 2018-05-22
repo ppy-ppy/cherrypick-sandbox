@@ -1,13 +1,9 @@
-from ernest.model_built_machinetype import *
-import numpy as np
-import scipy
-from scipy.optimize import nnls
 import csv
-import sys
 import os
 import math
 from sqlobject import *
 from spearmint.schema import VirtualMachineType as VM
+from nnls_predictor import Nnls_Predictor
 from sandbox.openstack_api import *
 import pickle
 import shutil
@@ -26,7 +22,7 @@ MAX_VALUE = 1000000000000
 deadline = 60
 
 
-def generate_data():
+def generate_testing_data(lowest, highest, interval, machine_lowest, machine_highest, machine_interval):
     training_data = read_training_data(INPUT_PATH)
     flavor_list = vm_name_list(training_data)
 
@@ -35,8 +31,8 @@ def generate_data():
 
     test_data = []
     for i in range(len(flavor_list)):
-        for machine_count in range(2, 18, 2):  # i  is  mcs
-            for data_size in xrange(1, 10):  # j  is  scale
+        for machine_count in range(machine_lowest, machine_highest, machine_interval):
+            for data_size in range(lowest, highest, interval):
                 if (machine_count == 4) or (machine_count == 8) or (machine_count == 16) or (machine_count == 2):
                     data = [machine_count, data_size, flavor_list[i]]
                     write_file(TEST_PATH, data)
@@ -56,8 +52,8 @@ def get_model(model_name):
             return model
 
 
-def test_data():
-    testing_data = read_file(TEST_PATH)
+def test_data(testing_data):
+    # testing_data = read_file(TEST_PATH)
 
     if os.path.exists(COMPARE_PATH):
         os.remove(COMPARE_PATH)
@@ -205,7 +201,7 @@ def vm_name_list(data):
     return u_list
 
 
-def train_data():
+def train_data(training_data):
     training_data = read_training_data(INPUT_PATH)
     flavor_list = vm_name_list(training_data)
 
@@ -220,7 +216,7 @@ def train_data():
     for flavor in flavor_list:
         data_file = flavor + ".csv"
         file_path = os.path.join(SPLIT_PATH, data_file)
-        pred = Pure_Predictor(flavor, data_file=file_path)
+        pred = Nnls_Predictor(flavor, data_file=file_path)
         sub_training_data = read_training_data(file_path)
         model = pred.fit(sub_training_data)
         model_set.append(pred)

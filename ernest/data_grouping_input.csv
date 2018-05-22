@@ -1,0 +1,20 @@
+# MachinesNumber,Scale,Time,VirtualMachine
+4,1,63.79,m1.medium
+4,1,61.87,m1.large
+4,1,51.05,m1.xlarge
+4,3,279.26,m1.large
+4,3,143.44,m1.xlarge
+8,1,52.82,m1.medium
+8,1,48.76,m1.large
+8,1,45.91,m1.xlarge
+8,3,179.64,m1.large
+8,3,96.31,m1.xlarge
+8,4,158.01,m1.large
+8,4,93.13,m1.xlarge
+16,1,53.89,m1.medium
+16,1,46.6,m1.large
+16,1,54.62,m1.xlarge
+16,3,94.12,m1.large
+16,3,86.27,m1.xlarge
+16,4,96.71,m1.large
+16,4,153.8,m1.xlarge
