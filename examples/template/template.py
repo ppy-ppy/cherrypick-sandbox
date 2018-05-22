@@ -64,6 +64,9 @@ def get_cost(spec):
 
     runs[0].num = 0
 
+    if runs[0].run_time == -2:
+        raise Exception("Invalid configuration for this experiment!")
+
     if TIME_LIMIT != -1 and runs[0].run_time > TIME_LIMIT:
         raise Exception("Run Time Exceeds!")
     total_cost += math.log(runs[0].cost) * runs[0].run_time
