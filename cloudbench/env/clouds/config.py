@@ -1,8 +1,8 @@
 class Config():
     controllerip = '10.141.105.252'
-    project_id = '6f91410d008a444f87a3db0d8aa86ff2'
-    user_id = 'e10b7f6463b54d5287fdb0cb5ff23c81'
-    password = 'admin'
+    project_id = '8ea5492598e9431bbcdd48fe6ebe094a'
+    user_id = '6237942b10894935a95f106a34056586'
+    password = 'admin252'
     security_groups = 'open'
     availability_zone = 'nova'
     diskConfig = 'AUTO'
