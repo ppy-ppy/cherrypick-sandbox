@@ -14,6 +14,9 @@ def get_user_id():
     return Config.user_id
 
 
+def get_passwd():
+    return Config.password
+
 def get_keystone_authtoken():
     controllerip = get_controllerip()
     payload = {
@@ -25,7 +28,7 @@ def get_keystone_authtoken():
                 "password": {
                     "user": {
                         "id": get_user_id(),
-                        "password": "admin"
+                        "password": get_passwd()
                     }
                 }
             },
