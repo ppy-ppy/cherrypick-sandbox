@@ -23,7 +23,6 @@
         <virtual-machine name='slave-15' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
         <virtual-machine name='slave-16' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
         <virtual-machine name='slave-17' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
-        <virtual-machine name='slave-18' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
     </virtual-machines>
 
     <virtual-networks>

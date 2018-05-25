@@ -19,11 +19,6 @@
         <virtual-machine name='slave-11' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
         <virtual-machine name='slave-12' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
         <virtual-machine name='slave-13' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
-        <virtual-machine name='slave-14' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
-        <virtual-machine name='slave-15' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
-        <virtual-machine name='slave-16' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
-        <virtual-machine name='slave-17' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
-        <virtual-machine name='slave-18' storage="global:storage" virtual-network='vn1' image='config:ubuntu' type='global:instance-type' location='us'/>
     </virtual-machines>
 
     <virtual-networks>
@@ -40,7 +35,7 @@
         <config name='us'   value='East US' />
 
         <locations>
-            <add-values name='us' storage-type='LRS' />
+            <add-values name='us' storage-type='LRS' /> 
         </locations>
         <virtual-networks>
             <add-values name='vn1' address-range='10.0.0.0' />
