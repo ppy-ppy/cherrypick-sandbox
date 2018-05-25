@@ -6,18 +6,18 @@ from spearmint.schema import Configuration as Config
 
 
 class VirtualMachine(object):
-    flavor_space = [
-        "m1.medium",
-        "m1.large",
-        "m1.xlarge",
-        "r2.small",
-        "r2.medium",
-        "r2.large",
-        "r2.xlarge",
-        "c3.medium",
-        "c3.large",
-        "c3.xlarge"
-    ]
+    # flavor_space = [
+    #     "m1.medium",
+    #     "m1.large",
+    #     "m1.xlarge",
+    #     "r2.small",
+    #     "r2.medium",
+    #     "r2.large",
+    #     "r2.xlarge",
+    #     "c3.medium",
+    #     "c3.large",
+    #     "c3.xlarge"
+    # ]
 
     def __init__(self, vm_name, vcpu, ram, disk):
         self.name = vm_name
@@ -34,16 +34,16 @@ class VirtualMachine(object):
 
 
 class Configuration(object):
-    machine_space = [2, 4, 8, 16]
+    # machine_space = [2, 4, 8, 16]
 
     def __init__(self, machine_count, vm_name, vcpu, ram, disk):
         self.machine_count = machine_count
         self.vm = VirtualMachine(vm_name, vcpu, ram, disk)
 
-    def check_valid_cluster_size(self):
-        if self.machine_count not in Configuration.machine_space:
-            return False
-        return True
+    # def check_valid_cluster_size(self):
+    #     if self.machine_count not in Configuration.machine_space:
+    #         return False
+    #     return True
 
     def insert_config(self):
         vm_0 = VM.selectBy(name=self.vm.name).getOne()

@@ -103,8 +103,8 @@ def get_vm_name(io_weight, cpu_weight, vcpus, ram, disk):
     min_distance = -1
     vm_name = ''
     for flavor in flavors:
-        if flavor['name'] not in VirtualMachine.flavor_space:
-            continue
+        # if flavor['name'] not in VirtualMachine.flavor_space:
+        #     continue
         if flavor['vcpus'] < vcpus or flavor['ram'] / 1024 < ram or flavor['disk'] < disk:
             continue
         else:
@@ -162,7 +162,8 @@ def get_best_config(experiment, is_to_optimize=True):
 def select_configuration(experiment, is_to_optimize=True):
 
     check_or_create_experiment(experiment)
-    start_bo(experiment.name)
+    if is_to_optimize:
+        start_bo(experiment.name)
     get_best_config(experiment, is_to_optimize)
 
     return experiment.best_configuration

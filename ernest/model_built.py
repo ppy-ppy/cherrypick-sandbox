@@ -2,21 +2,25 @@ import csv
 import os
 import math
 from sqlobject import *
-from spearmint.schema import VirtualMachineType as VM
-from nnls_predictor import NnlsPredictor
-from sandbox.openstack_api import *
 import pickle
 import shutil
 
-
+import sys
 FILE_PATH = os.path.abspath(os.path.dirname(__file__))
+ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(FILE_PATH)))
+sys.path.append(ROOT_PATH)
+
+from spearmint.schema import VirtualMachineType as VM
+from ernest.nnls_predictor import NnlsPredictor
+from sandbox.openstack_api import *
+
 
 SPLIT_PATH = os.path.join(FILE_PATH, "split_data")
 TEST_PATH = os.path.join(FILE_PATH, "test.csv")
-INPUT_PATH = os.path.join(FILE_PATH, "experiment_data.csv")
 MODEL_PATH = os.path.join(FILE_PATH, "model")
 CANDIDATE_PATH = os.path.join(FILE_PATH, "predicted_candidates.csv")
 MAX_VALUE = 1000000000000
+machine_choices = [2, 4, 8, 16]
 
 
 def write_file(file_path, data):
@@ -94,8 +98,9 @@ def train_data(training_data):
     return model_set
 
 
-def generate_testing_data(lowest, highest, interval, machine_lowest, machine_highest, machine_interval):
-    training_data = read_training_data(INPUT_PATH)
+def generate_testing_data(training_data_path, data_size,
+                          machine_lowest, machine_highest, machine_interval):
+    training_data = read_training_data(training_data_path)
     flavor_list = vm_name_list(training_data)
 
     if os.path.exists(TEST_PATH):
@@ -104,11 +109,10 @@ def generate_testing_data(lowest, highest, interval, machine_lowest, machine_hig
     test_data = []
     for i in range(len(flavor_list)):
         for machine_count in range(machine_lowest, machine_highest, machine_interval):
-            for data_size in range(lowest, highest, interval):
-                if (machine_count == 4) or (machine_count == 8) or (machine_count == 16) or (machine_count == 2):
-                    data = [machine_count, data_size, flavor_list[i]]
-                    write_file(TEST_PATH, data)
-                    test_data.append([machine_count, data_size, flavor_list[i]])
+            if machine_count in machine_choices:
+                data = [machine_count, data_size, flavor_list[i]]
+                write_file(TEST_PATH, data)
+                test_data.append([machine_count, data_size, flavor_list[i]])
 
     return test_data
 
@@ -176,6 +180,7 @@ def ddl_get_lowest_cost(deadline):
             min_cost = cost
             lowest = row
 
-    return lowest, min_cost
+    return lowest, math.log(min_cost)
 
+print "test"
 

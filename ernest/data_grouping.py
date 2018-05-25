@@ -2,7 +2,6 @@ import os
 from model_built import read_training_data, vm_name_list, write_file
 
 FILE_PATH = os.path.abspath(os.path.dirname(__file__))
-INPUT_PATH = os.path.join(FILE_PATH, "experiment_data.csv")
 TEST_PATH = os.path.join(FILE_PATH, "data_grouping_test.csv")
 
 # machine_choices = [4, 8, 16]
@@ -18,8 +17,8 @@ def get_machine_choices(input_data):
     return machine_choices
 
 
-def generate_testing_data(lowest, highest):
-    training_data = read_training_data(INPUT_PATH)
+def generate_testing_data(training_data_path, lowest, highest):
+    training_data = read_training_data(training_data_path)
     flavor_list = vm_name_list(training_data)
     machine_choices = get_machine_choices(training_data)
 
