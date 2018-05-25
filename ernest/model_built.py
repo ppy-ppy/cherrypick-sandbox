@@ -55,29 +55,44 @@ def read_training_data(data_file):
     return training_data
 
 
-def vm_name_list(data):
-    flavor = get_flavor_details()
-    u_name = []
-    for i in range(len(flavor)):
-        u_name.append(flavor[i][u'name'])  # get the type of the mcs
+# def vm_name_list(data):
+#     flavor = get_flavor_details()
+#     u_name = []
+#     for i in range(len(flavor)):
+#         u_name.append(flavor[i][u'name'])  # get the type of the mcs
+#
+#     data_list = []
+#     for row in data:
+#         data_list.append(row)  # get the csv file
+#     u_list = []
+#     for m in range(len(u_name)):
+#         for row in data_list:
+#             if row[3] == u_name[m]:
+#                 u_list.append(u_name[m])
+#                 break
+#             else:
+#                 continue
+#
+#     return u_list
 
-    data_list = []
+
+def get_available_flavors(data):
+    candidate_flavors = VM.select()
+    valid_flavor_names = []
+    for vm in list(candidate_flavors):
+        valid_flavor_names.append(vm.name)
+
+    available_flavors = []
     for row in data:
-        data_list.append(row)  # get the csv file
-    u_list = []
-    for m in range(len(u_name)):
-        for row in data_list:
-            if row[3] == u_name[m]:
-                u_list.append(u_name[m])
-                break
-            else:
-                continue
+        flavor_name = row[3]
+        if flavor_name in valid_flavor_names:
+            available_flavors.append(flavor_name)
 
-    return u_list
+    return available_flavors
 
 
 def train_data(training_data):
-    flavor_list = vm_name_list(training_data)
+    flavor_list = get_available_flavors(training_data)
 
     model_set = []
     if os.path.exists(SPLIT_PATH):
@@ -101,7 +116,7 @@ def train_data(training_data):
 def generate_testing_data(training_data_path, data_size,
                           machine_lowest, machine_highest, machine_interval):
     training_data = read_training_data(training_data_path)
-    flavor_list = vm_name_list(training_data)
+    flavor_list = get_available_flavors(training_data)
 
     if os.path.exists(TEST_PATH):
         os.remove(TEST_PATH)
@@ -126,6 +141,15 @@ def get_model(model_name):
             return model
 
 
+def check_valid_scale(scale, flavor_name):
+    disk = VM.selectBy(name=flavor_name).getOne().root_disk
+    max_valid_scale = int(disk) / 6
+    if scale > max_valid_scale:
+        return False
+
+    return True
+
+
 def test_data(testing_data):
 
     if os.path.exists(CANDIDATE_PATH):
@@ -137,7 +161,10 @@ def test_data(testing_data):
         flavor_name = str(row[2])
         pred_model = get_model(flavor_name)
 
-        predicted_time = pred_model.predict(machine_count, data_size)
+        if check_valid_scale(data_size, flavor_name):
+            predicted_time = pred_model.predict(machine_count, data_size)
+        else:
+            predicted_time = -2
 
         content = machine_count, data_size, predicted_time, flavor_name
         write_file(CANDIDATE_PATH, content)
@@ -175,6 +202,8 @@ def ddl_get_lowest_cost(deadline):
         predicted_time = row[2]
         flavor_name = row[3]
         price = VM.selectBy(name=flavor_name).getOne().cost
+        if predicted_time == -2:
+            continue
         cost = math.log(price * machine_count) * predicted_time
         if cost < min_cost:
             min_cost = cost
@@ -182,5 +211,6 @@ def ddl_get_lowest_cost(deadline):
 
     return lowest, math.log(min_cost)
 
-print "test"
+
+
 
