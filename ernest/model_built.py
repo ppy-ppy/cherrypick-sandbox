@@ -160,11 +160,11 @@ def test_data(testing_data):
         data_size = float(row[1])
         flavor_name = str(row[2])
         pred_model = get_model(flavor_name)
-
-        if check_valid_scale(data_size, flavor_name):
-            predicted_time = pred_model.predict(machine_count, data_size)
-        else:
-            predicted_time = -2
+        predicted_time = pred_model.predict(machine_count, data_size)
+        # if check_valid_scale(data_size, flavor_name):
+        #     predicted_time = pred_model.predict(machine_count, data_size)
+        # else:
+        #     predicted_time = -2
 
         content = machine_count, data_size, predicted_time, flavor_name
         write_file(CANDIDATE_PATH, content)

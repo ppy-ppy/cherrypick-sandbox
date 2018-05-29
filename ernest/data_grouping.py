@@ -1,5 +1,5 @@
 import os
-from model_built import read_training_data, vm_name_list, write_file
+from model_built import read_training_data, get_available_flavors, write_file
 
 FILE_PATH = os.path.abspath(os.path.dirname(__file__))
 TEST_PATH = os.path.join(FILE_PATH, "data_grouping_test.csv")
@@ -19,7 +19,7 @@ def get_machine_choices(input_data):
 
 def generate_testing_data(training_data_path, lowest, highest):
     training_data = read_training_data(training_data_path)
-    flavor_list = vm_name_list(training_data)
+    flavor_list = get_available_flavors(training_data)
     machine_choices = get_machine_choices(training_data)
 
     if os.path.exists(TEST_PATH):

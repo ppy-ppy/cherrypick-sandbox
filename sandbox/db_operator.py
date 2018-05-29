@@ -37,7 +37,7 @@ def get_run_cost(exp, config):
     job = JobInfo.find_job_info(exp.job_id, exp.user_id)
     runs = job.find_runs(config.vm.name, config.machine_count, float(exp.data_group))
     total_cost = math.log(runs[0].cost) * runs[0].run_time
-    return total_cost
+    return math.log(total_cost)
 
 
 if __name__ == '__main__':

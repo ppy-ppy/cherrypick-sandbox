@@ -127,17 +127,17 @@ def ddl_based_best_configuration(job_id, deadline, data_size,
 if __name__ == '__main__':
     job_id = "terasort"
 
-    deadline = 60
+    deadline = 1000
     data_lowest = 1
     data_highest = 20
     data_interval = 1
     machine_lowest = 2
     machine_highest = 20
-    machine_interval = 1
+    machine_interval = 4
 
-    data_size = 1
+    data_size = 7
 
     # data_grouping(job_id, data_lowest, data_highest, test_only=False)
 
     print ddl_based_best_configuration(job_id, deadline, data_size,
-                                       machine_lowest, machine_highest, machine_interval, test_only=True)
+                                       machine_lowest, machine_highest, machine_interval, test_only=False)
