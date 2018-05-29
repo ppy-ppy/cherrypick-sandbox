@@ -153,7 +153,7 @@ def get_best_config(experiment, is_to_optimize=True):
             data += line
 
         vcpus, ram, disk, cluster_size = data.split(", ")
-        vm_name = get_vm_name(experiment.io_percentage, experiment.cpu_percentage, int(vcpus), int(ram), int(disk))
+        vm_name = get_vm_name(experiment.io_percentage, experiment.cpu_percentage, int(vcpus), int(ram), int(disk) * 10)
 
     experiment.set_best_configuration(int(cluster_size), vm_name, int(vcpus), int(ram), int(disk))
     return experiment
