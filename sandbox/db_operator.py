@@ -22,10 +22,18 @@ def insert_run_time(job_id, data_size, vm_name, vm_count, run_time):
 
 
 def insert_best_configuration(exp, config, cost):
-    vm_id = VirtualMachineType.selectBy(name=config.vm.name).getOne().id
     job_id = JobInfo.selectBy(name=exp.job_id, user_id=exp.user_id).getOne().id
+    vm_id = VirtualMachineType.selectBy(name=config.vm.name).getOne().id
     config_id = Configuration.selectBy(count=config.machine_count, vm=vm_id).getOne().id
-    BestConfiguration(job=job_id, data_size=float(exp.data_group), config=config_id, cost=cost)
+
+    try:
+        best_config = BestConfiguration.selectBy(job=job_id).getOne()
+        best_config.data_size = float(exp.data_group)
+        best_config.config_id = config_id
+        best_config.cost = cost
+
+    except SQLObjectNotFound:
+        BestConfiguration(job=job_id, data_size=float(exp.data_group), config=config_id, cost=cost)
 
 
 def add_flavor(vm_name, vcpu, ram, disk, cost):

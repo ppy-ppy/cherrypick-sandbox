@@ -63,7 +63,7 @@ def rename_exp(path, exp_name):
 def check_or_create_experiment(experiment):
 
     exp_path = os.path.join(EXP_PATH, experiment.name)
-    print exp_path
+    # print exp_path
     if not os.path.exists(exp_path):
         copy_tree(TEMPLATE_PATH, exp_path)
 
@@ -73,7 +73,7 @@ def check_or_create_experiment(experiment):
 
         # write the new experiment into DB
         try:
-            print experiment.job_id, experiment.user_id, experiment.cpu_percentage, experiment.io_percentage
+            # print experiment.job_id, experiment.user_id, experiment.cpu_percentage, experiment.io_percentage
             new_experiment = JobInfo(name=experiment.job_id,
                                      user_id=experiment.user_id,
                                      cpu_percentage=experiment.cpu_percentage,
@@ -99,7 +99,6 @@ def start_bo(exp_name):
 
 def get_vm_name(io_weight, cpu_weight, vcpus, ram, disk):
     flavors = openstack_api.get_flavor_details()
-    print flavors
     min_distance = -1
     vm_name = ''
     for flavor in flavors:
@@ -138,7 +137,7 @@ def get_best_config(experiment, is_to_optimize=True):
         vm_name, vcpus, ram, disk, cluster_size, exp = data.split(' ')
     else:
         data = data.split("Parameters: \n")
-        print data
+        # print data
         lines = data[1].split("\n")
         data = ""
         for line in lines:

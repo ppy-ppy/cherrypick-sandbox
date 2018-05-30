@@ -28,7 +28,9 @@ def get_cost(spec):
 
     try:
         config = Configuration.selectBy(vm=vm_name, count=int(cluster_size)).getOne()
-    except:
+    except SQLObjectIntegrityError:
+        print SQLObjectIntegrityError
+    except SQLObjectNotFound:
         configuration.insert_config()
 
     # if not configuration.check_valid_cluster_size():
