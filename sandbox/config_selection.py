@@ -75,7 +75,7 @@ def check_or_create_experiment(experiment):
         # write the new experiment into DB
 
         try:
-            new_experiment = JobInfo.selectBy(name=experiment.job_id, user_id=experiment.user_id)
+            new_experiment = JobInfo.find_job_info(experiment.job_id, experiment.user_id)
 
         except SQLObjectNotFound:
             new_experiment = JobInfo(name=experiment.job_id,
