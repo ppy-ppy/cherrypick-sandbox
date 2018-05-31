@@ -67,7 +67,7 @@ class Configuration(object):
 
 
 class Experiment(object):
-    data_split = [0, 1, 5, 10, 100]
+    data_split = [0, 1, 5, 10, 50, 100]
 
     def __init__(self, job_id, user_id, data_size, io_percentage=None, cpu_percentage=None, best_configuration=None):
 
