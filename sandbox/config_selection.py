@@ -8,6 +8,7 @@ from spearmint.schema import JobInfo
 
 from spearmint import main as bo
 import openstack_api
+from spearmint.schema import *
 from experiment import VirtualMachine, Experiment
 
 
@@ -72,15 +73,17 @@ def check_or_create_experiment(experiment):
         replace_exp(TEMPLATE_PATH, exp_path, "experiment_config.py", experiment)
 
         # write the new experiment into DB
+
         try:
-            # print experiment.job_id, experiment.user_id, experiment.cpu_percentage, experiment.io_percentage
+            new_experiment = JobInfo.selectBy(name=experiment.job_id, user_id=experiment.user_id)
+
+        except SQLObjectNotFound:
             new_experiment = JobInfo(name=experiment.job_id,
                                      user_id=experiment.user_id,
                                      cpu_percentage=experiment.cpu_percentage,
                                      io_percentage=experiment.io_percentage)
-            print new_experiment
-        except Exception, e:
-            print e
+
+        print new_experiment
 
 
 def start_bo(exp_name):
