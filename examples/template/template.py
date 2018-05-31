@@ -26,12 +26,7 @@ def get_cost(spec):
     vm_name = config_selection.get_vm_name(job.io_percentage, job.cpu_percentage, int(vcpus), int(ram), disk)
     configuration = Config(int(cluster_size), vm_name, int(vcpus), int(ram), disk)
 
-    try:
-        config = Configuration.selectBy(vm=vm_name, count=int(cluster_size)).getOne()
-    except SQLObjectIntegrityError:
-        print SQLObjectIntegrityError
-    except SQLObjectNotFound:
-        configuration.insert_config()
+    config = configuration.get_config()
 
     # if not configuration.check_valid_cluster_size():
     #     raise Exception("Invalid Machine Count!")
@@ -55,7 +50,6 @@ def get_cost(spec):
     if not runs:
         num = 0
         run_time = 0
-        config = configuration.get_config()
         Runtime(job=job,
                 data_size=float(experiment.data_group),
                 config=config,
@@ -94,5 +88,4 @@ def get_cost(spec):
 
 
 def main(job_id, params):
-    return COST_FUNC(get_cost(params))
-
+    return get_cost(params)

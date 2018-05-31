@@ -9,7 +9,7 @@ DATA_GROUP = "data_size"
 # TODO: receive parameters for weight
 # WEIGHT = [8, 1, 1, 1, 1]
 
-COST_FUNC = lambda cost: math.log(cost)
+# COST_FUNC = lambda cost: math.log(cost)
 TIME_LIMIT = -1
 
 # controller_ip = '10.141.105.252'

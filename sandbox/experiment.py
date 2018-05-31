@@ -28,6 +28,7 @@ class VirtualMachine(object):
     def insert_vm(self, cost):
         VM(name=self.name, ram=self.ram, cpu_count=self.vcpu, root_disk=self.disk, cost=cost)
 
+    @property
     def cost(self):
         vm = VM.selectBy(name=self.name).getOne()
         return float(vm.cost)
@@ -60,7 +61,7 @@ class Configuration(object):
 
     @property
     def cost(self):
-        vm_cost = self.vm.cost
+        vm_cost = float(self.vm.cost)
         cost = vm_cost * self.machine_count
         return math.log(cost)
 
@@ -98,4 +99,5 @@ class Experiment(object):
     def name(self):
         name = str(self.user_id) + "-" + str(self.job_id) + "-" + str(self.data_group)
         return name
+
 

@@ -119,6 +119,17 @@ def get_vm_name(io_weight, cpu_weight, vcpus, ram, disk):
     return vm_name
 
 
+def get_lowest_cost(experiment):
+    file_name = "best_job_and_result.txt"
+    file_path = os.path.join(EXP_PATH, experiment.name, file_name)
+    file_object = open(file_path, 'r')
+    data = file_object.read()
+    data = data.split("Parameters: \n")
+    results = data[0].split("\n")[0]
+    lowest_cost = results.split(": ")[1]
+    return float(lowest_cost)
+
+
 def get_best_config(experiment, is_to_optimize=True):
     if is_to_optimize:
         file_name = "experiment.txt"
@@ -137,7 +148,6 @@ def get_best_config(experiment, is_to_optimize=True):
         vm_name, vcpus, ram, disk, cluster_size, exp = data.split(' ')
     else:
         data = data.split("Parameters: \n")
-        # print data
         lines = data[1].split("\n")
         data = ""
         for line in lines:

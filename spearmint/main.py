@@ -173,8 +173,8 @@ def main(exp_config, user_mode='offline', verbose=None, max_concurrent=1, grid_s
          driver='local', web_status_host=None, job='', grid_seed=1, web_status_port=0, chooser_args='',
          polling_time=3.0, chooser_module='GPEIOptChooser', web_status=None):
     # Life universe and everything ...
-    np.random.seed(42)
-    random.seed(42)
+    np.random.seed(22)
+    random.seed(22)
     config.strikes = 0
 
     # (options, args) = parse_args()
@@ -368,25 +368,25 @@ def attempt_dispatch(expt_config, expt_dir, chooser, driver, options):
         job.submit_t = int(time.time())
         job.param.extend(expt_grid.get_params(job_id))
 
-        # TODO: (@omid) check if the job has been previously completed; if so
-        #      mark the job as completed and use the cached value
-        params = job_params(job)
-        for key, val in params.items():
-            if isinstance(val, np.ndarray):
-                val = val.tolist()
-            if isinstance(val, list):
-                val = frozenset(val)
-            params[key] = val
-        params = frozenset(params.items())
-        if params in jobs_executed:
-            jid = jobs_executed[params]
-            print ">>>> Bypassing job execution."
-            for stat in ['status', 'values', 'durs']:
-                dic = getattr(expt_grid, stat)
-                dic[job_id] = dic[jid]
-            expt_grid._save_jobs()
-            return True
-        jobs_executed[params] = job_id
+        # # TODO: (@omid) check if the job has been previously completed; if so
+        # #      mark the job as completed and use the cached value
+        # params = job_params(job)
+        # for key, val in params.items():
+        #     if isinstance(val, np.ndarray):
+        #         val = val.tolist()
+        #     if isinstance(val, list):
+        #         val = frozenset(val)
+        #     params[key] = val
+        # params = frozenset(params.items())
+        # if params in jobs_executed:
+        #     jid = jobs_executed[params]
+        #     print ">>>> Bypassing job execution."
+        #     for stat in ['status', 'values', 'durs']:
+        #         dic = getattr(expt_grid, stat)
+        #         dic[job_id] = dic[jid]
+        #     expt_grid._save_jobs()
+        #     return True
+        # jobs_executed[params] = job_id
 
         save_job(job)
         pid = driver.submit_job(job)
