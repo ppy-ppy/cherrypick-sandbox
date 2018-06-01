@@ -141,9 +141,9 @@ def get_model(model_name):
             return model
 
 
-def check_valid_scale(scale, flavor_name):
+def check_valid_scale(scale, flavor_name, machine_count):
     disk = VM.selectBy(name=flavor_name).getOne().root_disk
-    max_valid_scale = int(disk) / 6
+    max_valid_scale = (int(disk) * machine_count) / 6 * 0.8
     if scale > max_valid_scale:
         return False
 
@@ -161,7 +161,7 @@ def test_data(testing_data):
         flavor_name = str(row[2])
         pred_model = get_model(flavor_name)
         # predicted_time = pred_model.predict(machine_count, data_size)
-        if check_valid_scale(data_size, flavor_name):
+        if check_valid_scale(data_size, flavor_name, machine_count):
             predicted_time = pred_model.predict(machine_count, data_size)
         else:
             predicted_time = -2
