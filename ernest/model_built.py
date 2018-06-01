@@ -85,7 +85,7 @@ def get_available_flavors(data):
     available_flavors = []
     for row in data:
         flavor_name = row[3]
-        if flavor_name in valid_flavor_names:
+        if flavor_name in valid_flavor_names and flavor_name not in available_flavors:
             available_flavors.append(flavor_name)
 
     return available_flavors
