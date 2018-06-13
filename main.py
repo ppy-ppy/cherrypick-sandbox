@@ -4,9 +4,7 @@ from sandbox.experiment import *
 
 def select_configuration(user_id, job_id, data_size, is_to_optimize=True):
 
-    print user_id, job_id
     experiment = Experiment(job_id, user_id, data_size)
-    print experiment.job_id, experiment.user_id
     experiment.set_io_cpu_percentage()
 
     best_configuration = config_selection.select_configuration(experiment, is_to_optimize)
@@ -23,7 +21,7 @@ def select_configuration(user_id, job_id, data_size, is_to_optimize=True):
         print "\tSIZE: ", best_configuration.machine_count
         print "Recommended Configuration: ", best_configuration.vm.name, "*", best_configuration.machine_count
 
-        lowest_cost = db_operator.get_run_cost(experiment, best_configuration)
+        lowest_cost = config_selection.get_lowest_cost(experiment)
         db_operator.insert_best_configuration(experiment, best_configuration, lowest_cost)
 
     return experiment.name, best_configuration.vm.name, best_configuration.machine_count, \
@@ -31,9 +29,9 @@ def select_configuration(user_id, job_id, data_size, is_to_optimize=True):
 
 
 if __name__ == '__main__':
-    job_id = "terasort"
-    data_size = 1
-    user_id = "user"
+    job_id = "simple"
+    data_size = 10
+    user_id = "ppy"
 
     exp_name, vm, vcpus, ram, disk, cluster_size = \
         select_configuration(user_id, job_id, data_size, False)

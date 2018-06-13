@@ -1,7 +1,7 @@
 class Config():
-    controllerip = '10.141.105.252'
-    project_id = '8ea5492598e9431bbcdd48fe6ebe094a'
-    user_id = '6237942b10894935a95f106a34056586'
+    controllerip = '10.190.88.254'
+    project_id = '8a935f01bcef4035912cae8cd604228d'
+    user_id = '35be9b6b4b03433fa2aeba6df8c0a701'
     password = 'admin252'
     security_groups = 'open'
     availability_zone = 'nova'
