@@ -1,11 +1,16 @@
+import itertools
 import os
 import shutil
-import sys
+
+from ernest.exp_grouping import Grouping
+
+# from spearmint.schema import VirtualMachineType as VM
 
 
 FILE_PATH = os.path.abspath(os.path.dirname(__file__))
 DATA_PATH = os.path.join(FILE_PATH, "data")
 MODEL_PATH = os.path.join(FILE_PATH, "models")
+# GROUP_PATH = os.path.join(FILE_PATH, "grouping/predicted_candidates.csv")
 
 
 def create_experiment(exp_data_path, job_id, data_grouping):
@@ -124,20 +129,34 @@ def ddl_based_best_configuration(job_id, deadline, data_size,
     return get_best_configuration(job_id, deadline)
 
 
+def time_based_grouping(job_id):
+    file_name = "predicted_candidates.csv"
+    input_data_path = os.path.join(MODEL_PATH, job_id, file_name)
+
+    gr = Grouping(data_file=input_data_path)
+    scale_split = gr.time_based_grouping()
+
+    # print scale_split
+    return scale_split
+
+
 if __name__ == '__main__':
+    # time_based_grouping()
     job_id = "terasort"
 
-    deadline = 1000
-    data_lowest = 1
-    data_highest = 20
-    data_interval = 1
-    machine_lowest = 2
-    machine_highest = 20
-    machine_interval = 4
-
-    data_size = 7
-
+    time_based_grouping(job_id)
+    #
+    # deadline = 1000
+    # data_lowest = 1
+    # data_highest = 50
+    # data_interval = 1
+    # machine_lowest = 4
+    # machine_highest = 20
+    # machine_interval = 4
+    # #
+    # # data_size = 7
+    # #
     # data_grouping(job_id, data_lowest, data_highest, test_only=False)
-
-    print ddl_based_best_configuration(job_id, deadline, data_size,
-                                       machine_lowest, machine_highest, machine_interval, test_only=False)
+    #
+    # print ddl_based_best_configuration(job_id, deadline, data_size,
+    #                                    machine_lowest, machine_highest, machine_interval, test_only=False)
