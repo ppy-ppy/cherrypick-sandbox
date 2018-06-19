@@ -4,6 +4,8 @@ import job_analysis
 from spearmint.schema import VirtualMachineType as VM
 from spearmint.schema import Configuration as Config
 
+from ernest.main import time_based_grouping
+
 
 class VirtualMachine(object):
     # flavor_space = [
@@ -67,7 +69,10 @@ class Configuration(object):
 
 
 class Experiment(object):
-    data_split = [0, 1, 5, 10, 50, 100]
+    # data_split = [0, 1, 5, 10, 50, 100]
+    # data_split = ernest.main.time_based_grouping(job_id)
+
+    # print data_split
 
     def __init__(self, job_id, user_id, data_size, io_percentage=None, cpu_percentage=None, best_configuration=None):
 
@@ -89,7 +94,8 @@ class Experiment(object):
     @property
     def data_group(self):
         data_group = "0"
-        for split in Experiment.data_split:
+        data_partition = time_based_grouping(self.job_id)
+        for split in data_partition:
             if self.data_size - split < 0:
                 break
             data_group = str(split)

@@ -29,9 +29,9 @@ def select_configuration(user_id, job_id, data_size, is_to_optimize=True):
 
 
 if __name__ == '__main__':
-    job_id = "simple"
-    data_size = 10
+    job_id = "terasort"
+    data_size = 0.5
     user_id = "ppy"
 
     exp_name, vm, vcpus, ram, disk, cluster_size = \
-        select_configuration(user_id, job_id, data_size, False)
+        select_configuration(user_id, job_id, data_size, True)
