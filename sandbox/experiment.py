@@ -93,6 +93,8 @@ class Experiment(object):
 
     @property
     def data_group(self):
+        if self.data_size == 1:
+            return "1"
         data_group = "0"
         data_partition = time_based_grouping(self.job_id)
         for split in data_partition:
