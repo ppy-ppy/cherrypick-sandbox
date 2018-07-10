@@ -9,7 +9,7 @@ from spearmint.schema import JobInfo
 from spearmint import main as bo
 import openstack_api
 from spearmint.schema import *
-from experiment import VirtualMachine, Experiment
+from ernest.main import ddl_based_best_configuration
 
 
 def clean_path(path):
@@ -167,7 +167,7 @@ def get_best_config(experiment, is_to_optimize=True):
         vcpus, ram, disk, cluster_size = data.split(", ")
         vm_name = get_vm_name(experiment.io_percentage, experiment.cpu_percentage, int(vcpus), int(ram), int(disk) * 10)
 
-    experiment.set_best_configuration(int(cluster_size), vm_name, int(vcpus), int(ram), int(disk))
+    experiment.set_best_configuration(int(cluster_size), vm_name, int(vcpus), int(ram), int(disk) * 10)
     return experiment
 
 
@@ -179,6 +179,26 @@ def select_configuration(experiment, is_to_optimize=True):
     get_best_config(experiment, is_to_optimize)
 
     return experiment.best_configuration
+
+
+def select_configuration_with_ddl(experiment, deadline):
+
+    check_or_create_experiment(experiment)
+    machine_lowest = 4
+    machine_highest = 20
+    machine_interval = 4
+
+    lowest, cost = ddl_based_best_configuration(experiment.job_id, deadline, experiment.data_size,
+                                                machine_lowest, machine_highest, machine_interval, test_only=False)
+    if lowest == '':
+        return None, None
+
+    vm_name = lowest[3]
+    machine_count = lowest[0]
+    vm = VirtualMachineType.selectBy(name=vm_name).getOne()
+    experiment.set_best_configuration(machine_count, vm_name, int(vm.cpu_count), float(vm.ram), float(vm.root_disk))
+
+    return experiment.best_configuration, cost
 
 
 # job_id = "terasort"

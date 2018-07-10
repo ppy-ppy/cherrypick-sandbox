@@ -39,7 +39,7 @@ def create_experiment(exp_data_path, job_id, data_grouping):
 
 
 def train_model(job_id, data_path):
-    mod = __import__("models." + job_id,
+    mod = __import__("ernest.models." + job_id,
                      fromlist=['model_built', ])
     model_built = mod.model_built
     training_data = model_built.read_training_data(data_path)
@@ -48,7 +48,7 @@ def train_model(job_id, data_path):
 
 def generate_size_restricted_data(job_id, training_data_path, data_size,
                                   machine_lowest, machine_highest, machine_interval):
-    mod = __import__("models." + job_id,
+    mod = __import__("ernest.models." + job_id,
                      fromlist=['model_built', ])
     model_built = mod.model_built
     model_built.generate_testing_data(training_data_path,
@@ -61,7 +61,7 @@ def generate_size_restricted_data(job_id, training_data_path, data_size,
 
 
 def generate_machine_restricted_data(job_id, training_data_path, lowest, highest):
-    mod = __import__("models." + job_id,
+    mod = __import__("ernest.models." + job_id,
                      fromlist=['data_grouping', 'model_built', ])
     data_grouping = mod.data_grouping
     model_built = mod.model_built
@@ -73,14 +73,14 @@ def generate_machine_restricted_data(job_id, training_data_path, lowest, highest
 
 
 def test_model(job_id, testing_data):
-    mod = __import__("models." + job_id,
+    mod = __import__("ernest.models." + job_id,
                      fromlist=['model_built', ])
     model_built = mod.model_built
     model_built.test_data(testing_data)
 
 
 def get_best_configuration(job_id, deadline):
-    mod = __import__("models." + job_id,
+    mod = __import__("ernest.models." + job_id,
                      fromlist=['model_built', ])
     model_built = mod.model_built
     lowest, min_cost = model_built.ddl_get_lowest_cost(deadline)
@@ -141,22 +141,21 @@ def time_based_grouping(job_id):
 
 
 if __name__ == '__main__':
-    # time_based_grouping()
     job_id = "terasort"
 
-    time_based_grouping(job_id)
+    # print time_based_grouping(job_id)
     #
-    # deadline = 1000
-    # data_lowest = 1
-    # data_highest = 50
-    # data_interval = 1
-    # machine_lowest = 4
-    # machine_highest = 20
-    # machine_interval = 4
-    # #
-    # # data_size = 7
-    # #
+    deadline = 40
+    data_lowest = 1
+    data_highest = 50
+    data_interval = 1
+    machine_lowest = 4
+    machine_highest = 20
+    machine_interval = 4
+
+    data_size = 1
+
     # data_grouping(job_id, data_lowest, data_highest, test_only=False)
-    #
-    # print ddl_based_best_configuration(job_id, deadline, data_size,
-    #                                    machine_lowest, machine_highest, machine_interval, test_only=False)
+
+    print ddl_based_best_configuration(job_id, deadline, data_size,
+                                       machine_lowest, machine_highest, machine_interval, test_only=False)

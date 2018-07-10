@@ -102,6 +102,8 @@ class Grouping(object):
                 if i < (len(num_times) - 1):
                     del num_times[i]
 
+        # print num_times
+
         scale_group = []
 
         for i in range(len(num_times)):
@@ -113,6 +115,8 @@ class Grouping(object):
                 bottom = top + num_times[i][1] - 1
             scale_group.append(
                 (self.surplus_scale_list[top], self.surplus_scale_list[bottom], cluster_type[top][num_times[i][0]]))
+
+        # print scale_group
 
         scale_split = []
 
