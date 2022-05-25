@@ -36,7 +36,7 @@ pipreqs==0.4.9
 protobuf==2.5.0
 pycparser==2.18
 PyDispatcher==2.0.5
-PyJWT==1.5.3
+PyJWT==2.4.0
 pylint==1.7.4
 python-dateutil==2.6.1
 requests==2.18.4
