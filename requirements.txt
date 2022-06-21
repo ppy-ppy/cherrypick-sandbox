@@ -1,4 +1,4 @@
-numpy==1.9.2
+numpy==1.22.0
 adal==0.4.7
 asn1crypto==0.23.0
 astroid==1.5.3
