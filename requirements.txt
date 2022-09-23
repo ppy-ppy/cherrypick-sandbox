@@ -33,7 +33,7 @@ oauthlib==2.0.6
 pathlib2==2.3.0
 pbr==3.1.1
 pipreqs==0.4.9
-protobuf==2.5.0
+protobuf==3.18.3
 pycparser==2.18
 PyDispatcher==2.0.5
 PyJWT==1.5.3
